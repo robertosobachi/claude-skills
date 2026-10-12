@@ -6,6 +6,7 @@ My personal skills for [Claude Code](https://code.claude.com/docs/en/skills).
 
 - `ai-practice`: turns a working session into practice at building AI tooling on the real task at hand, and logs honest results.
 - `commit-title`: writes a gitmoji commit title for the staged changes.
+- `review-prs`: light, unblocking review of one or more GitHub PRs, stacked ones included, with a merge verdict and approval trade-off per PR. Never posts anything.
 
 ## Install
 
