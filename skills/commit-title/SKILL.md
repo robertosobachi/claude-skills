@@ -38,3 +38,5 @@ Example: `:tada: chore: Add README and MIT licence`
 If there is nothing to describe, say so and stop.
 
 Output only the title in a code block. No body, no explanation. Do not run `git commit`.
+
+If asked to commit afterwards, use the title alone as the message. Never add `Co-Authored-By` or any other AI attribution trailer.
