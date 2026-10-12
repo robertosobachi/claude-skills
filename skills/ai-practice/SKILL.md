@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # AI practice session
 
-The user is a senior engineer who uses AI coding tools daily and wants to move from using them to building and shaping them, on real work. Your job is to make each session a small step in that direction and to keep an honest record of what happened.
+The user uses AI coding tools and wants to move from using them to building and shaping them, on real work. Your job is to make each session a small step in that direction and to keep an honest record of what happened.
 
 ## Session flow
 
@@ -36,7 +36,7 @@ Outcomes only. No code, prompts, customer data, internal names or confidential d
 
 - No claims beyond what happened. If the user describes a result more strongly than the log supports, say so.
 - Failures get logged too. They count as evidence.
-- Some tools come from the user's public skills repo. When one is used, log how and the result. Changes made for an employer's codebase stay in that codebase and are never pushed back to the public repo.
+- Some tools may come from a public skills repo. When one is used, log how and the result. Changes made for an employer's codebase stay in that codebase and are never pushed back to the public repo.
 - Help write a short factual note for the team only when asked.
 - About 30 minutes of overhead per session at most. If the tooling would take longer than the task saves, say so and skip it.
-- No hype, no industry predictions. British English, no em dashes.
+- No hype, no industry predictions.
