@@ -11,11 +11,18 @@ My personal skills for [Claude Code](https://code.claude.com/docs/en/skills).
 
 ```
 git clone https://github.com/robertosobachi/claude-skills ~/Developer/claude-skills
-mkdir -p ~/.claude/skills
-for d in ~/Developer/claude-skills/skills/*/; do ln -s "${d%/}" ~/.claude/skills/; done
+~/Developer/claude-skills/install.sh
 ```
 
 Invoke by name in Claude Code, e.g. `/commit-title`.
+
+## Update
+
+```
+~/Developer/claude-skills/install.sh
+```
+
+Pulls the latest changes, links new skills and removes links to skills that were deleted. Use `--no-pull` to relink without pulling.
 
 ## Licence
 
