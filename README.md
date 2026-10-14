@@ -4,7 +4,7 @@ Skills for [Claude Code](https://code.claude.com/docs/en/skills) that I use day 
 
 ## Why
 
-This is my working toolkit. I use it and improve it on personal projects, when practising and at work, so changes come from real use. The skills follow my practices but contain nothing personal or company-specific: read them, copy them or install them as they are.
+This is my working toolkit. I use it and improve it on personal projects, when practising and at work, so changes come from real use. The skills follow my practices but contain nothing personal or company-specific: copy them or install them as they are.
 
 ## Skills
 
