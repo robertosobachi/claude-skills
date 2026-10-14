@@ -43,9 +43,14 @@ Staged changes are one commit. Otherwise, if the changes hold separate pieces of
 
 ## Output
 
-With one title, copy it to the clipboard by running `${CLAUDE_SKILL_DIR}/copy.sh '<title>'`, escaping any `'` in the title as `'\''`. Run it once and don't retry it outside the sandbox. Output only the title in a code block. If the copy failed, add one line under it: `Not copied, run /copy.`
+Commands must paste and run as-is:
 
-With several titles, don't copy. Output each title in its own code block, with a line under it listing its files, and mark any file that also holds changes for another piece. End with one line: `Run /commit to stage and commit them.`
+- `git add <files>`: files space-separated, paths as `git status --short` shows them. For a rename, list both paths. For a deletion, list the path. Single-quote any path with spaces or shell metacharacters.
+- `git commit -m "<title>"`: escape any `"`, `$`, `` ` `` or `\` in the title with a backslash.
+
+With one title, copy it to the clipboard by running `${CLAUDE_SKILL_DIR}/copy.sh '<title>'`, escaping any `'` in the title as `'\''`. Run it once and don't retry it outside the sandbox. Output the title in a code block. If the copy failed, add one line under it: `Not copied, run /copy.` Then output the command in a second code block: `git commit -m "<title>"` alone if the changes are staged, otherwise `git add <files>` on one line and `git commit -m "<title>"` on the next.
+
+With several titles, don't copy. Output one code block per piece, in commit order, holding `git add <files>` on one line and `git commit -m "<title>"` on the next. If a file also holds changes for another piece, say so in one plain line under the block, never inside it. End with one line: `Run /commit to stage and commit them.`
 
 No body, no other explanation. Do not run `git add` or `git commit`.
 
