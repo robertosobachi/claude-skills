@@ -16,6 +16,15 @@ This is my working toolkit. I use it and improve it on personal projects, when p
 | [`review-prs`](skills/review-prs/SKILL.md) | Light, unblocking review of one or more GitHub PRs, stacked ones included, with a merge verdict and approval trade-off per PR. Never posts anything. | You have PRs to review | `/review-prs`, or paste PR URLs and ask for a review |
 | [`which-skill`](skills/which-skill/SKILL.md) | Reads the conversation and git state and suggests the skill to start with, from every skill installed, not just this repo. | You're about to start and aren't sure which skill fits | `/which-skill [task]` |
 
+## Why some steps stay manual
+
+Some skills stop before the last step and print a command to paste or text to retype instead. That's deliberate.
+
+- **Keep the skill sharp.** Doing these steps by hand keeps the muscle working. They take seconds, and that's worth more than the time the AI would save.
+- **Review before anything critical.** Steps that could trigger a deploy or a release, or change code in production, stay manual so there's a chance to review them before they run. A mistake there can damage the integrity of the system itself. `commit` never pushes, `commit-title` prints the commands instead of running them and `review-prs` never posts.
+
+On top of this, I keep my own restrictions and guardrails in place to block unwanted actions by the AI.
+
 ## Install
 
 Needs Claude Code, git and bash. `review-prs` uses `gh` if it works, otherwise it asks you to run a `git fetch`.
