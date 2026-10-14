@@ -1,8 +1,8 @@
 ---
 name: commit-title
-description: Write a gitmoji commit title for the current work.
+description: Write a gitmoji commit title for the current work, or one title per separate piece of work.
 disable-model-invocation: true
-allowed-tools: Bash(git diff *) Bash(git status *)
+allowed-tools: Bash(git diff *) Bash(git status *) Bash(${CLAUDE_SKILL_DIR}/copy.sh *)
 ---
 
 ## Working tree
@@ -19,11 +19,11 @@ allowed-tools: Bash(git diff *) Bash(git status *)
 
 ## Your task
 
-Write one commit title for the current work. Describe the first of these that exists:
+Write a commit title for the current work. Describe the first of these that exists:
 
 1. `$ARGUMENTS`, if given.
 2. The staged changes above.
-3. The unstaged changes above.
+3. The unstaged changes and untracked files above. Read untracked files if you need to see what they are.
 4. The work done in this conversation.
 
 Format: `:<gitmoji>: <type>: <Subject>`
@@ -37,6 +37,16 @@ Example: `:tada: chore: Add README and MIT licence`
 
 If there is nothing to describe, say so and stop.
 
-Output only the title in a code block. No body, no explanation. Do not run `git commit`.
+## Separate work
+
+Staged changes are one commit. Otherwise, if the changes hold separate pieces of work, such as a feature and an unrelated docs update, write one title per piece, in commit order. Files that only make sense together stay in one piece. Pieces are whole files: if a file holds changes for two pieces, put it with the one it mostly belongs to. When in doubt, use fewer pieces.
+
+## Output
+
+With one title, copy it to the clipboard by running `${CLAUDE_SKILL_DIR}/copy.sh '<title>'`, escaping any `'` in the title as `'\''`. Run it once and don't retry it outside the sandbox. Output only the title in a code block. If the copy failed, add one line under it: `Not copied, run /copy.`
+
+With several titles, don't copy. Output each title in its own code block, with a line under it listing its files, and mark any file that also holds changes for another piece. End with one line: `Run /commit to stage and commit them.`
+
+No body, no other explanation. Do not run `git add` or `git commit`.
 
 If asked to commit afterwards, use the title alone as the message. Never add `Co-Authored-By` or any other AI attribution trailer.
