@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Stage and commit the current work, one commit per separate piece of work, each with a gitmoji title. Never pushes.
+description: Stage and commit the current work, one commit per separate piece of work, each with a gitmoji title, and rate the push risk of each. Never pushes.
 disable-model-invocation: true
 allowed-tools: Bash(git add *) Bash(git commit *) Bash(git diff *) Bash(git status *) Bash(git log *)
 ---
@@ -35,6 +35,18 @@ Title format: `:<gitmoji>: <type>: <Subject>`
 
 If there is nothing to commit, say so and stop.
 
+## Push risk
+
+Rate each commit on how much breaks, and for whom, if it is wrong once pushed. The highest level in a commit wins: one 🔴 file makes the whole commit 🔴.
+
+- 🟢 Low: docs, comments or tests only, dev-only tooling, new code nothing calls yet, or a refactor with no behaviour change that tests cover.
+- 🟡 Medium: a behaviour change in code with a few callers, a shared component or util, a user-visible UI change, non-trivial logic, or a minor dependency bump.
+- 🔴 High: auth, payments, permissions, data migrations or schema, a public API or exported contract, a removed or renamed symbol that still has callers, build, CI, deploy or release config, env or secrets handling, a major dependency bump, or changes spread across many modules.
+
+If a commit removes, renames or changes the signature of an exported symbol, search the repo for its callers and count them. Otherwise judge from the diff alone and explore nothing else.
+
+Format: `<emoji> <Level>: <what it reaches and how it fails if wrong>`, one line under about 100 characters. Name the concrete caller, screen or system, never a generic phrase. Example: `🔴 High: changes token refresh used by every API call, a bug logs everyone out`. Low can be short: `🟢 Low: README only`.
+
 ## Rules
 
 - Stage by explicit path. Never `git add -A`, `git add .` or `git commit -a`.
@@ -44,4 +56,4 @@ If there is nothing to commit, say so and stop.
 
 ## Report
 
-Show `git log --oneline -n <commits made>`, then the command that undoes them all: `git reset --soft HEAD~<commits made>`. Name any file that went into one commit but also held changes for another. Nothing else.
+Show `git log --oneline -n <commits made>`. Under it, one risk line per commit in the same order: `<short hash> <emoji> <Level>: <reason>`. Then the command that undoes them all: `git reset --soft HEAD~<commits made>`. Name any file that went into one commit but also held changes for another. Nothing else.
