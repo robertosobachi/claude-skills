@@ -14,6 +14,7 @@ This is my working toolkit. I use it and improve it on personal projects, when p
 | [`commit`](skills/commit/SKILL.md) | Stages and commits the current work, one commit per separate piece, each with a `commit-title` style title. Splits by whole file, rates the push risk of each commit (🟢/🟡/🔴), never pushes and prints the command to undo. | The work is done and you want it committed in clean groups | Stages and commits | `/commit [hint]` |
 | [`commit-title`](skills/commit-title/SKILL.md) | Writes a gitmoji and conventional-type title for the staged changes, falling back to unstaged changes, then the conversation. One title per separate piece, each with a push risk rating (🟢/🟡/🔴), prints paste-ready `git add` and `git commit` commands and copies a single title to the clipboard. | You want the title but will commit yourself | No | `/commit-title [hint]` |
 | [`review-prs`](skills/review-prs/SKILL.md) | Light, unblocking review of one or more GitHub PRs, stacked ones included, with a merge verdict and approval trade-off per PR. Never posts anything. | You have PRs to review | No | `/review-prs`, or paste PR URLs and ask for a review |
+| [`slack-morning-brief`](skills/slack-morning-brief/SKILL.md) | Sets up or runs a weekday brief of decisions, changes and incidents across the Slack workspace, channels you're not in included. Read only in Slack. | You want to know what changed overnight before you start work | Creates a scheduled task at setup, never posts in Slack | `/slack-morning-brief` |
 | [`which-skill`](skills/which-skill/SKILL.md) | Reads the conversation and git state and suggests the skill to start with, from every skill installed, not just this repo. | You're about to start and aren't sure which skill fits | No | `/which-skill [task]` |
 
 ## Why some steps stay manual
@@ -27,7 +28,7 @@ On top of this, I keep my own restrictions and guardrails in place to block unwa
 
 ## Install
 
-Needs Claude Code, git and bash. `review-prs` uses `gh` if it works, otherwise it asks you to run a `git fetch`.
+Needs Claude Code, git and bash. `review-prs` uses `gh` if it works, otherwise it asks you to run a `git fetch`. `slack-morning-brief` needs a Slack connector, and scheduled-task tools (Cowork) to run on its own.
 
 ```
 git clone https://github.com/robertosobachi/claude-skills
