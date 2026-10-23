@@ -29,7 +29,7 @@ Review each PR only against its own base so a change is never flagged twice.
 
 - If the diffs total under ~1000 lines, read them yourself. For bigger ones, use one subagent per PR (sonnet or lower).
 - Report only blocking issues: bugs, crashes, data loss, security, broken build or tests, callers broken by removed or renamed symbols, or a clear break of the repo's CLAUDE.md rules. Leave out style, naming, and nice-to-haves entirely.
-- Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behavior with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker.
+- Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behaviour with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker.
 - Check across the stack: a later PR relying on something missing earlier, or an earlier PR that stays broken until a later one lands.
 
 ## 4. Report (in chat)
@@ -55,4 +55,4 @@ Keep it to three lines per PR, with no hedging. If a PR is refactor-only with te
 
 ## 7. Summary (when asked)
 
-One line on what the set of PRs does overall, then one bullet per PR: what changed and where (module, platform or service), and whether it's a refactor, a behavior change, or tests. Short enough to answer "what was in those PRs?" in a meeting.
+One line on what the set of PRs does overall, then one bullet per PR: what changed and where (module, platform or service), and whether it's a refactor, a behaviour change, or tests. Short enough to answer "what was in those PRs?" in a meeting.
