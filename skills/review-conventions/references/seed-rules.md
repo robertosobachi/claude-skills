@@ -11,7 +11,7 @@ Generic rules that hold in most codebases. Use them to seed a new review convent
 
 ## Structure and naming
 
-- **Reuse before inventing.** Check for an existing helper, concern, library or sibling that already solved the problem. The nearest neighbour's convention beats a locally defensible one.
+- **Reuse before inventing.** Check for an existing helper, module, library or sibling that already solved the problem. The nearest neighbour's convention beats a locally defensible one.
 - **Use the codebase's meaning of a word,** and say so in the name when the code does something narrower.
 - **Inline a private method or constant with one caller,** unless its name explains something the code doesn't.
 - **Keep code readable in place.** New lines match their siblings' shape. Repos disagree on test literals (name every repeated one, or no constant that exists only for tests), so follow the repo.
@@ -26,7 +26,7 @@ Generic rules that hold in most codebases. Use them to seed a new review convent
 - **Don't pass or log values the framework already carries** (request IDs, job IDs, the class name).
 - **Give a log message something to say,** beyond the class or method name.
 - **Do the work, then log it.** The main action runs on its own line, and the log call reads its result.
-- **Batch a fan-out** with the bulk enqueue API.
+- **Batch a fan-out** with the job queue's batch API.
 - **Say what a dry run is meant to show,** and check that it can show it.
 - **Cut observability that drives no decision.**
 
@@ -47,7 +47,7 @@ Generic rules that hold in most codebases. Use them to seed a new review convent
 - **Assume deploys aren't atomic.** New code can run before its migration, and running processes may hold an old schema. Guard every read of a new column, or ship the column in an earlier deploy.
 - **Stay correct while a new column fills in,** not just alive, when it drives a decision.
 - **Remove temporary guards in a follow-up PR** once the migration has run everywhere.
-- **Keep unrelated schema or annotation drift out of the diff.**
+- **Keep unrelated schema drift and regenerated files out of the diff.**
 
 ## PR descriptions
 
