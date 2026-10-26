@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Prints the frontmatter of every installed skill and the current git state,
-# for which-skill to choose from. Always exits 0: a failing injected command
-# aborts the skill.
+# for which-skill to choose from. Always exits 0, so a missing skills directory
+# doesn't read as a failure.
 shopt -s nullglob
 
 echo "## Installed skills"
