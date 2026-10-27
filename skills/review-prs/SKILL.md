@@ -1,6 +1,6 @@
 ---
 name: review-prs
-description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments only for blocking issues, short varied approval comments, and a short summary if asked. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
+description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments only for blocking issues, a paste-ready final comment per PR that is always included, and a short summary if asked. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
 ---
 
 # Review PRs
@@ -34,7 +34,7 @@ Review each PR only against its own base so a change is never flagged twice.
 
 ## 4. Report (in chat)
 
-One line per PR: `#<n> <title> — ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several. Under it, paste-ready comments only if something blocks: `file:line — <1-2 sentences: issue + small reason, or a question>`. Then a few short bullets on what was checked, and the limits (no CI status or existing comments without `gh`, nothing built locally). Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`.
+One line per PR: `#<n> <title> — ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several. Under it, paste-ready comments only if something blocks: `file:line — <1-2 sentences: issue + small reason, or a question>`. Then a few short bullets on what was checked, and the limits (no CI status or existing comments without `gh`, nothing built locally). Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`. Close the report with the final comment for each PR (section 6). It's always included, not only when asked.
 
 ## 5. Approval trade-off (per PR, in the report)
 
@@ -46,12 +46,16 @@ For each PR, answer three questions in one short line each, based on the actual 
 
 Keep it to three lines per PR, with no hedging. If a PR is refactor-only with tests, say that the risk is low and why.
 
-## 6. Approval comments (when asked)
+## 6. Final comment (always)
 
-- One short line per PR that names what that PR actually changed, in plain words.
-- Vary the wording and structure across PRs. Don't open every comment with "LGTM, nothing blocking" or reuse the same sentence pattern.
+One paste-ready comment per PR, whatever the verdict, at the end of the section 4 report.
+
+- ✅ OK to merge: open with "LGTM", then add one or both, briefly: the payoff in plain words if users or developers will notice it (for example "so we can get this new behaviour now, nice!"), or a one-line restatement of what the PR does, to show the change was understood.
+- ⚠️ Merge after fix or ❌ Not yet: no LGTM. One or two sentences on what has to change before it can merge, pointing to the inline comments. Restate what the PR does if that helps.
+- Keep every comment to one or two short sentences. Plain, natural English, no filler, no AI attribution.
+- Describe the change exactly as the diff shows it. A new property on an existing event isn't a "new event". When the user's wording and the diff disagree, follow the diff and flag the difference outside the comment.
+- LGTM is the expected opening, so vary only what comes after it. Don't reuse the same wording or sentence pattern across PRs.
 - Only praise something that matters to a reader. Don't call out things with no visible effect (for example "now read-only") unless you can say why it helps in a few words.
-- Plain, natural English, no filler, no AI attribution.
 
 ## 7. Summary (when asked)
 
