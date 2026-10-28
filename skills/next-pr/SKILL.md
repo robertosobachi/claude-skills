@@ -49,28 +49,9 @@ Files, tests, and the order you'd build them, plus anything that touches shared 
 6. **Hand over**, in this order:
    - The files to stage, by name, and any unrelated drift to `git restore`.
    - One commit title in the format the user's instructions or the repo set. One commit per PR unless the user or repo says otherwise.
-   - The PR title in the repo's format.
-   - The PR description (below).
+   - The PR title and description, written to the `pr-description` skill's Write and Rules sections. Add a bullet for each departure from the nearest precedent, only where a reviewer would otherwise ask.
    - For a stacked PR whose parent moved: the restack commands (`git rebase --onto <new parent> <old parent head> <branch>`, then `git push --force-with-lease`).
 7. **Record:** update the plan's section 0 and add a dated session-log entry with what was built, deviations from the approved plan and why, what ran, and what is pending. If another session will pick up the next PR, offer to write its prompt with the `handover-prompt` skill.
-
-## PR description shape
-
-Use the repo's PR template or the shape in its review conventions if either exists. Otherwise:
-
-```
-## Summary
-
-<Context: one or two sentences on the overall goal in plain words, with the design doc linked inline, and the base branch or the PR it stacks on. Never "Part of <ticket>".>
-
-<This PR: what it achieves and how it fits the goal, in a short paragraph. Then each departure from the nearest precedent, one sentence each, only where a reviewer would otherwise ask.>
-
-### Blast radius
-
-<One or two sentences: is it safe, what breaks if it's wrong, side effects, how to roll back.>
-```
-
-Add other `###` sections only for operational steps this PR needs (a migration to run, a rollout step). A bug fix goes shorter: cause in one or two sentences, changes as bullets, blast radius. Verify every factual claim in the description against running code, or say it's unverified.
 
 ## Stop conditions
 
