@@ -11,6 +11,8 @@ Purpose: use AI to select and remove work, not to multiply it. Do not start the 
 
 ## Step 1: ask before acting
 
+Always establish ownership first: "Is this mine to decide, or whose is it (team, PM, lead, another team)?" Skip it only if the answer is obvious from the request. It counts towards the 3-question limit.
+
 Ask at most 3 questions in one message. Choose the ones whose answers would most change the verdict:
 
 - What decision or outcome does this serve? Who acts on it?
@@ -39,11 +41,13 @@ Output only this:
 - **Why:** one line
 - **If doing it:** the smallest version that meets the goal
 - **Stop doing:** anything this check shows can be removed
+- **Raise with:** only if the work is shared or owned by someone else. Name the owner and give a two-line case to send them: who uses it, what decision it drives, and what replaces it if it's cut.
 
 Then wait. Only do the task if the user confirms.
 
 ## Rules
 
+- On shared work, every verdict except "do" is a proposal, not a decision. Don't recommend dropping or changing someone else's work without stating the evidence the owner would need.
 - No praise, no reassurance, no productivity tips.
 - Don't manufacture a cut. If it should be done as asked, say "do it as is" and why.
 - For small tasks (under 15 minutes, no recurrence), say "just do it" and stop.
