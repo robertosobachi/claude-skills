@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Runs after git pull: relinks skills and repacks the Desktop zips
+# that changed. Enabled by install.sh through core.hooksPath.
+set -euo pipefail
+
+[[ "${CLAUDE_SKILLS_INSTALLING:-}" == 1 ]] && exit 0
+
+repo="$(git rev-parse --show-toplevel)"
+"$repo/install.sh" --no-pull
+"$repo/package.sh" --since ORIG_HEAD

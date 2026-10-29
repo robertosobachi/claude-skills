@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Runs the post-merge steps after git pull --rebase.
+[[ "${1:-}" == rebase ]] && exec "$(dirname "${BASH_SOURCE[0]}")/post-merge"
+exit 0

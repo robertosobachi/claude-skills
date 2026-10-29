@@ -49,6 +49,8 @@ Each skill is symlinked into `~/.claude/skills`, or `$CLAUDE_SKILLS_DIR` if set.
 
 Run `./install.sh` again. It pulls the latest changes, links new skills and removes links to skills that were deleted. Use `--no-pull` to relink without pulling.
 
+`./install.sh` also sets `core.hooksPath` to `githooks/`, so from then on a plain `git pull`, in the terminal or an editor, relinks on its own and repacks any Desktop zip whose skill changed. This replaces `.git/hooks` for this clone. Undo with `git config --unset core.hooksPath`.
+
 ## Claude Desktop and claude.ai
 
 Chat in Claude Desktop and claude.ai doesn't read `~/.claude/skills`. Upload the skills there as zips instead.
@@ -59,7 +61,7 @@ Chat in Claude Desktop and claude.ai doesn't read `~/.claude/skills`. Upload the
 
 - With no arguments it packs `peer-feedback-notes`, `handover-prompt` and `slack-morning-brief`. The other skills need a local repo, git or `gh`, which chat can't reach. Pass names to pack others, e.g. `./package.sh which-skill`.
 - Upload each zip from `dist/` in Customize > Skills. Uploaded skills sync to every device signed in to the same account.
-- Uploads don't update. After changing a skill, run `./package.sh` again and replace the upload.
+- Uploads don't update. After a pull, the hook repacks the zips whose skill changed and names each one to re-upload. After changing a skill yourself, run `./package.sh` again and replace the upload.
 
 ## Licence
 
