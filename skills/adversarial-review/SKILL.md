@@ -1,7 +1,7 @@
 ---
 name: adversarial-review
-description: Adversarial pre-ship review of a PR, branch or file against its base. Four fresh-context reviewers (correctness, contracts, behaviour, tests) each try to prove the change wrong, then a fresh judge verifies every finding against the code and drops what has no evidence. Reports valid blockers and should-fix items with evidence, up to 5 nits, and unverifiable items. Read-only, never edits, commits, pushes or comments. Use when the user runs /adversarial-review <PR, branch or path> [base].
-argument-hint: "<PR number | branch | path> [base branch]"
+description: Adversarial pre-ship review of a PR, branch or file against its base. Four fresh-context reviewers (correctness, contracts, behaviour, tests) each try to prove the change wrong, then a fresh judge verifies every finding against the code and drops what has no evidence. Reports valid blockers and should-fix items with evidence, up to 5 nits, and unverifiable items. Read-only, never edits, commits, pushes or comments. Defaults to the current branch, uncommitted work included. Use when the user runs /adversarial-review [PR, branch or path] [base].
+argument-hint: "[PR number | branch | path] [base branch]"
 disable-model-invocation: true
 ---
 
@@ -24,6 +24,7 @@ This block applies to you and to every subagent. Paste it into each subagent pro
 Use one simple command per Bash call. No `cd`, loops or `$(...)`.
 
 - **Base:** the argument if given, else the PR's base, else the default branch from `git symbolic-ref --short refs/remotes/origin/HEAD`. Don't assume `main`.
+- **No target (default):** the current branch, uncommitted work included. Run `git merge-base <base> HEAD`, then review `git diff <merge-base>`, which covers the branch's commits and uncommitted changes to tracked files. Add untracked files from `git status --short`. If there's nothing to review, say so and ask which PR, branch or path to review instead.
 - **PR number:** try `gh pr view <n> --json baseRefName,headRefName,title,body` once. `gh` often fails inside a sandbox, so if it does, ask the user to run this in their own terminal and wait:
   ```
   git fetch origin <base> pull/<n>/head:refs/review/<n>
@@ -33,8 +34,8 @@ Use one simple command per Bash call. No `cd`, loops or `$(...)`.
 
 Collect:
 
-- The diff: `git diff <base>...<head>` (or the path form).
-- The touched files: `git diff --name-only <base>...<head>`.
+- The diff, in the form above for the target.
+- The touched files: the same diff with `--name-only`, plus any untracked files.
 - The stated intent: the PR title and body, or the ticket text if the user gave one. If there's neither, say so to reviewer 3 instead of inventing one.
 
 If the diff is under ~50 lines, say once that a single pass would do and ask whether to run the full panel anyway.
