@@ -7,7 +7,7 @@ set -euo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 dist="$repo/dist"
-defaults=(peer-feedback-notes handover-prompt slack-morning-brief)
+defaults=(peer-feedback-notes handover-prompt slack-morning-brief should-this-exist)
 note=""
 
 if [[ "${1:-}" == "--since" ]]; then

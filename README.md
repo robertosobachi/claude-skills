@@ -59,7 +59,7 @@ Chat in Claude Desktop and claude.ai doesn't read `~/.claude/skills`. Upload the
 ./package.sh
 ```
 
-- With no arguments it packs `peer-feedback-notes`, `handover-prompt` and `slack-morning-brief`. The other skills need a local repo, git or `gh`, which chat can't reach. Pass names to pack others, e.g. `./package.sh which-skill`.
+- With no arguments it packs `peer-feedback-notes`, `handover-prompt`, `slack-morning-brief` and `should-this-exist`. The other skills need a local repo, git or `gh`, which chat can't reach. Pass names to pack others, e.g. `./package.sh which-skill`.
 - Upload each zip from `dist/` in Customize > Skills. Uploaded skills sync to every device signed in to the same account.
 - Uploads don't update. After a pull, the hook repacks the zips whose skill changed and names each one to re-upload. After changing a skill yourself, run `./package.sh` again and replace the upload.
 
