@@ -1,6 +1,6 @@
 ---
 name: peer-feedback-notes
-description: Record peer feedback about a colleague as dated, evidence-based notes for the performance review. Rates each entry, decides whether it needs action now instead of waiting for the review cycle, and separates individual behaviour from process problems. Use when the user says "note some peer feedback", "I want to write feedback for <name>", "add this to <name>'s review notes", "log something I noticed about <name>", or describes a colleague's behaviour they want to remember, even if they don't say "feedback" or "review". Also for perf review, annual review, 360 or the company's own name for the review cycle.
+description: Record peer feedback about a colleague as dated, evidence-based notes for the performance review. Rates each entry, decides whether it needs action now instead of waiting for the review cycle, and separates individual behaviour from process problems. Use when the user says "note some peer feedback", "I want to write feedback for [name]", "add this to [name]'s review notes", "log something I noticed about [name]", or describes a colleague's behaviour they want to remember, even if they don't say "feedback" or "review". Also for perf review, annual review, 360 or the company's own name for the review cycle.
 ---
 
 # Peer feedback notes
