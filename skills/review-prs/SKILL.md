@@ -56,6 +56,13 @@ One paste-ready comment per PR, whatever the verdict, at the end of the section 
 - Describe the change exactly as the diff shows it. A new property on an existing event isn't a "new event". When the user's wording and the diff disagree, follow the diff and flag the difference outside the comment.
 - LGTM is the expected opening, so vary only what comes after it. Don't reuse the same wording or sentence pattern across PRs.
 - Only praise something that matters to a reader. Don't call out things with no visible effect (for example "now read-only") unless you can say why it helps in a few words.
+- **Style pass.** Check every comment, inline ones included, before handing it over and fix failures in place, without mentioning them:
+  - No em dashes outside code, commands and paths. Use a comma, full stop, colon or brackets.
+  - No "it's not X, it's Y" or "less X, more Y" contrasts. Say the point directly.
+  - No opener other than LGTM ("Good catch", "Great question") and no closing recap.
+  - Plain words over tell-words: delve, robust, seamless, crucial, comprehensive, leverage (say "use"), ensure (say "make sure", or cut it).
+  - Don't force groups of three. At most one hedge per sentence, and none on a claim you've verified.
+  - Leave quoted text, code and identifiers as they are.
 
 ## 7. Summary (when asked)
 

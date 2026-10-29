@@ -50,7 +50,13 @@ Skip renames, formatting, moves, mechanical follow-ons of another change and any
 - Link the issue, doc or upstream bug when there is one. Never invent a link.
 - A code comment follows the file's comment style and density.
 - No hedging, filler or AI attribution.
-- **Style pass.** If the `write-like-a-human` skill is installed, run it on the drafts before handing them over.
+- **Style pass.** Check every draft before handing it over and fix failures in place, without mentioning them:
+  - No em dashes outside code, commands and paths. Use a comma, full stop, colon or brackets.
+  - No "it's not X, it's Y" or "less X, more Y" contrasts. Say the point directly.
+  - No opener ("Good catch", "Great question") and no closing recap.
+  - Plain words over tell-words: delve, robust, seamless, crucial, comprehensive, leverage (say "use"), ensure (say "make sure", or cut it).
+  - Don't force groups of three. At most one hedge per sentence, and none on a claim you've verified.
+  - Leave quoted text, code and identifiers as they are.
 
 ## 5. Anchor each comment
 
