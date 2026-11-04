@@ -8,6 +8,12 @@ set -euo pipefail
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 target="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
 
+dirty="$(git -C "$repo" status --porcelain -- skills)"
+if [[ -n "$dirty" ]]; then
+  echo "warn   local edits under skills/ will diverge, commit them upstream or git restore:"
+  printf '%s\n' "$dirty" | sed 's/^/         /'
+fi
+
 if [[ "${1:-}" != "--no-pull" ]]; then
   CLAUDE_SKILLS_INSTALLING=1 git -C "$repo" pull --ff-only --quiet
 fi
