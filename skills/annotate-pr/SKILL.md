@@ -77,3 +77,4 @@ Skip renames, formatting, moves, mechanical follow-ons of another change and any
 - Never invent a reason or a link. A why with no evidence is a question.
 - Every line anchor is checked against the hunk headers.
 - Never hard-wrap prose. One comment paragraph is one line.
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.

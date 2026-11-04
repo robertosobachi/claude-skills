@@ -78,6 +78,7 @@ Leave out fields that don't apply (for example Feedback and escalation, or Follo
 - **Use the career ladder when the user provides one.** Map observations to specific level expectations instead of judging someone as passing or failing their role.
 - **Flag review-cycle surprises.** If constructive feedback hasn't been shared directly, flag it. The review cycle shouldn't be the first time someone hears it.
 - **Never write feedback notes to disk.** Output them in chat only, since they contain sensitive information about colleagues.
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
 
 ## GitHub scripts
 

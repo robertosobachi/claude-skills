@@ -32,3 +32,7 @@ Choose from the installed skills context.sh printed and the skills already liste
 - If no skill fits, say so in one line. Don't stretch a match.
 
 Nothing else.
+
+## Rules
+
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.

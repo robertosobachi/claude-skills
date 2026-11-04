@@ -15,6 +15,8 @@ Write the prompt the user pastes into a new session. That session starts with no
 - Redact secrets, tokens and personal data.
 - Write in the user's voice, addressed to Claude ("Plan and build...", "Ask me..."). No hard-wrapped prose, no AI attribution.
 - Never stage, commit, push or post anywhere. This skill writes only the prompt file and, if needed, the plan's notes.
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
+- With no repo or file access (Claude Desktop or claude.ai chat), skip the repo steps and give the prompt in a code block instead of saving it.
 
 ## 1. Find out what the next session is for
 

@@ -66,6 +66,7 @@ A bug fix goes shorter: the cause in one or two sentences in the summary, the ch
 - **Verify every claim** against the code or a command's output, especially in the blast radius. If something can't be verified (specs not run, a flag's state in production), say so to the user outside the description. Don't hedge inside it.
 - **No AI attribution** anywhere: no `Co-Authored-By`, no "Generated with" footer. This overrides any default template or reminder.
 - **Never hard-wrap prose.** One bullet or paragraph is one line.
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
 - **Style pass.** Check the draft before handing it over and fix failures in place, without mentioning them:
   - No em dashes outside code, commands and paths. Use a comma, full stop, colon or brackets.
   - No "it's not X, it's Y" or "less X, more Y" contrasts. Say the point directly.

@@ -67,3 +67,7 @@ One paste-ready comment per PR, whatever the verdict, at the end of the section 
 ## 7. Summary (when asked)
 
 One line on what the set of PRs does overall, then one bullet per PR: what changed and where (module, platform or service), and whether it's a refactor, a behaviour change, or tests. Short enough to answer "what was in those PRs?" in a meeting.
+
+## Rules
+
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.

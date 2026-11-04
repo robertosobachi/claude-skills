@@ -82,3 +82,7 @@ Rules: max 7 items, then "+N minor items skipped", placed before the legend. Omi
 
 If Slack tools are unavailable, reply with one line saying so. Never invent items, channels or links.
 ```
+
+## Rules
+
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.

@@ -41,7 +41,8 @@ Outcomes only. No code, prompts, customer data, internal names or confidential d
 
 - No claims beyond what happened. If the user describes a result more strongly than the log supports, say so.
 - Failures get logged too. They count as evidence.
-- Some tools may come from a public skills repo. When one is used, log how and the result. Changes made for an employer's codebase stay in that codebase and are never pushed back to the public repo.
+- Some tools may come from a public skills repo. When one is used, log how and the result. An installed skill from a shared repo is usually a symlink into a clone of that repo, so never edit it in place: build a project-local skill in the repo's `.claude/skills/` instead, or note the change for the user to make upstream. Changes made for an employer's codebase stay in that codebase and are never pushed back to the public repo.
 - Help write a short factual note for the team only when asked.
 - About 30 minutes of overhead per session at most. If the tooling would take longer than the task saves, say so and skip it.
 - No hype, no industry predictions.
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.

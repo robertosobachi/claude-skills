@@ -62,8 +62,12 @@ Commands must paste and run as-is:
 
 With one title, copy it to the clipboard by running `${CLAUDE_SKILL_DIR}/copy.sh '<title>'`, escaping any `'` in the title as `'\''`. Run it once and don't retry it outside the sandbox. Output the title in a code block. If the copy failed, add one line under it: `Not copied, run /copy.` Then output the command in a second code block: `git commit -m "<title>"` alone if the changes are staged, otherwise `git add <files>` on one line and `git commit -m "<title>"` on the next. Put the risk line under it, as plain text.
 
-With several titles, don't copy. Output one code block per piece, in commit order, holding `git add <files>` on one line and `git commit -m "<title>"` on the next. Under each block put its risk line, then, if a file also holds changes for another piece, say so in one more plain line. Never put either inside a block. End with one line: `Run /commit to stage and commit them.`
+With several titles, don't copy. Output one code block per piece, in commit order, holding `git add <files>` on one line and `git commit -m "<title>"` on the next. Under each block put its risk line, then, if a file also holds changes for another piece, say so in one more plain line. Never put either inside a block. If `/commit` is among the available skills, end with one line: `Run /commit to stage and commit them.`
 
 No body, no explanation beyond the risk lines. Do not run `git add` or `git commit`.
 
 If asked to commit afterwards, use the title alone as the message. Never add `Co-Authored-By` or any other AI attribution trailer.
+
+## Rules
+
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.

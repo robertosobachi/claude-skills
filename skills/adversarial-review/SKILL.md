@@ -106,3 +106,7 @@ In chat, in this order:
 4. One line on which checks ran and which couldn't, with the reason.
 
 If nothing valid survives, say so in one line. Don't fix anything. If `refs/review/*` refs were fetched, mention they can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`.
+
+## Rules
+
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.

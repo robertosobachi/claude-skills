@@ -15,6 +15,7 @@ Build one PR from a plan written by `kickoff`, or any plan with a PR list. If th
 - Settled decisions in the plan are settled. Don't reopen them. If the code contradicts one, stop and say so.
 - If the sandbox blocks a command (a local service, the database, `gh`), say so and give the exact command for the user to run and paste back.
 - No AI attribution. Never hard-wrap prose.
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
 
 ## Read first, in this order
 
@@ -49,9 +50,9 @@ Files, tests, and the order you'd build them, plus anything that touches shared 
 6. **Hand over**, in this order:
    - The files to stage, by name, and any unrelated drift to `git restore`.
    - One commit title in the format the user's instructions or the repo set. One commit per PR unless the user or repo says otherwise.
-   - The PR title and description, written to the `pr-description` skill's Write and Rules sections. Add a bullet for each departure from the nearest precedent, only where a reviewer would otherwise ask.
+   - The PR title and description, written to the `pr-description` skill's Write it and Rules sections if it's installed, otherwise as a plain summary, the changes as bullets and the blast radius as bullets. Add a bullet for each departure from the nearest precedent, only where a reviewer would otherwise ask.
    - For a stacked PR whose parent moved: the restack commands (`git rebase --onto <new parent> <old parent head> <branch>`, then `git push --force-with-lease`).
-7. **Record:** update the plan's section 0 and add a dated session-log entry with what was built, deviations from the approved plan and why, what ran, and what is pending. If another session will pick up the next PR, offer to write its prompt with the `handover-prompt` skill.
+7. **Record:** update the plan's section 0 and add a dated session-log entry with what was built, deviations from the approved plan and why, what ran, and what is pending. If another session will pick up the next PR, offer to write its prompt with the `handover-prompt` skill if it's installed.
 
 ## Stop conditions
 

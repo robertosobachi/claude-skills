@@ -53,6 +53,7 @@ Format: `<emoji> <Level>: <what it reaches and how it fails if wrong>`, one line
 - Never amend, rebase, push or pass `--no-verify`.
 - If a commit fails, for example a hook rejects it, stop and show the error. Don't change files to make it pass.
 - The message is the title alone. Never add `Co-Authored-By` or any other AI attribution trailer.
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
 
 ## Report
 

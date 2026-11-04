@@ -51,3 +51,4 @@ Then wait. Only do the task if the user confirms.
 - No praise, no reassurance, no productivity tips.
 - Don't manufacture a cut. If it should be done as asked, say "do it as is" and why.
 - For small tasks (under 15 minutes, no recurrence), say "just do it" and stop.
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.

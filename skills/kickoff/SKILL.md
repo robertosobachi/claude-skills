@@ -16,6 +16,7 @@ Turn a requirements page or ticket into an approved plan of small, independently
 - If the sandbox blocks something (a tracker the connector can't reach, `gh` without auth, a database or local service), say so in one line and give the user the exact command or the exact thing to paste back. Don't guess around it.
 - No AI attribution. Never hard-wrap prose: one paragraph is one line.
 - Ask the user only about decisions that are theirs.
+- Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
 
 ## Steps
 
