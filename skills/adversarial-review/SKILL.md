@@ -2,7 +2,6 @@
 name: adversarial-review
 description: Adversarial pre-ship review of a PR, branch or file against its base. Four fresh-context reviewers (correctness, contracts, behaviour, tests) each try to prove the change wrong, then a fresh judge verifies every finding against the code and drops what has no evidence. Reports valid blockers and should-fix items with evidence, up to 5 nits, and unverifiable items. Read-only, never edits, commits, pushes or comments. Defaults to the current branch, uncommitted work included. Use when the user runs /adversarial-review [PR, branch or path] [base].
 argument-hint: "[PR number | branch | path] [base branch]"
-disable-model-invocation: true
 ---
 
 # Adversarial review
@@ -43,6 +42,8 @@ If the diff is under ~50 lines, say once that a single pass would do and ask whe
 ## 2. Run the checks once
 
 Find the repo's test, type check and lint commands in `package.json` scripts, the Makefile, CI config or `CLAUDE.md`. Run each once on the head and keep the raw output. If one can't run, record the command and why.
+
+If the target's head isn't the checked-out `HEAD` (a `refs/review/<n>` ref or another branch), don't run them: they would test the working tree, not the change. Record "not run: head not checked out" as the check output instead.
 
 Run them here, not in the reviewers: four parallel runs collide on build caches, ports and test databases, and cost four times as much.
 
@@ -106,6 +107,14 @@ In chat, in this order:
 4. One line on which checks ran and which couldn't, with the reason.
 
 If nothing valid survives, say so in one line. Don't fix anything. If `refs/review/*` refs were fetched, mention they can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`.
+
+## Called from another skill
+
+When another skill (such as `review-prs`) invokes this one:
+
+- Use the target and base it gives. Don't fetch again.
+- Skip the under-~50-lines question. The caller has decided.
+- Skip section 5. Hand the judge's verdicts back to the caller (valid, invalid or unverifiable, each with `file:line`, claim, evidence and severity) plus the one line on checks. The caller writes the report.
 
 ## Rules
 

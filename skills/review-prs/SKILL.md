@@ -1,6 +1,6 @@
 ---
 name: review-prs
-description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments for must-fix issues, questions and a few non-blocking suggestions, each led by an emoji, written in plain words and kept short, with a note for the user on why each was raised, a paste-ready final comment per PR that is always included, and a short summary if asked. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
+description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments for must-fix issues, questions and a few non-blocking suggestions, each led by an emoji, written in plain words and kept short, with a note for the user on why each was raised, a paste-ready final comment per PR that is always included, and a short summary if asked. Optionally runs adversarial-review on the same PRs when asked, and folds its verified findings into the comments. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
 ---
 
 # Review PRs
@@ -33,6 +33,21 @@ Review each PR only against its own base so a change is never flagged twice.
 - Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behaviour with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker.
 - Check across the stack: a later PR relying on something missing earlier, or an earlier PR that stays broken until a later one lands.
 
+## 3b. Adversarial pass (only when asked)
+
+Run this only when the user asks for it ("with adversarial review", "adversarial", "go deeper"). Never offer or ask by default. Do it after your own review in section 3, so your reading isn't shaped by its findings.
+
+- Skip PRs under ~50 changed lines and say so in one line.
+- For each remaining PR, invoke the `adversarial-review` skill with target `refs/review/<n>` and that PR's own base from section 2 (the PR below it for stacked PRs), so nothing is flagged twice across the stack.
+- Treat the judge's verdicts as candidates for section 3, not as comments:
+  - valid blocker: 🔴 if it meets the blocking list in section 3. Re-read the cited line first.
+  - valid should fix: 🔴 only if it meets that list, otherwise a 💡 that counts towards the 2 suggestions per PR.
+  - nit: drop.
+  - unverifiable: ❓ only if the answer would change the verdict, otherwise drop.
+  - invalid: drop.
+- Merge with your own findings. When both found the same issue, keep one comment and say in its `Why:` note that the judge confirmed it, with its evidence.
+- Write every comment yourself under "Writing comments". Don't paste adversarial-review wording through.
+
 ## 4. Report (in chat)
 
 One line per PR: `#<n> <title> — ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several. Under it, paste-ready comments if there's anything to say, written as in "Writing comments" below. List 🔴 first, then ❓, then 💡. Each comment uses this shape:
@@ -44,7 +59,7 @@ One line per PR: `#<n> <title> — ✅ OK to merge | ⚠️ Merge after fix | �
 Why: <for the user, never pasted>
 ```
 
-The `Why:` note is for the user only. Every comment gets one, the final comment included. In one to three plain sentences, say what you found, how you checked it (callers grepped, implementation read, compared with the other platform) and what happens if it's ignored. This is where the technical detail and evidence go, so the comment itself can stay short. Write it so the user could defend the comment if the author pushes back. Suggestions alone never move a PR off ✅. Then a few short bullets on what was checked, and the limits (no CI status or existing comments without `gh`, nothing built locally). Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`. Close the report with the final comment for each PR (section 6). It's always included, not only when asked.
+The `Why:` note is for the user only. Every comment gets one, the final comment included. In one to three plain sentences, say what you found, how you checked it (callers grepped, implementation read, compared with the other platform) and what happens if it's ignored. This is where the technical detail and evidence go, so the comment itself can stay short. Write it so the user could defend the comment if the author pushes back. Suggestions alone never move a PR off ✅. Then a few short bullets on what was checked, and the limits (no CI status or existing comments without `gh`, nothing built locally). If section 3b ran, one bullet per PR: adversarial pass ran or was skipped (and why), how many findings were kept and dropped, and which checks ran. Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`. Close the report with the final comment for each PR (section 6). It's always included, not only when asked.
 
 ### Writing comments
 
