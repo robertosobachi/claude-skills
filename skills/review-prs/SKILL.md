@@ -1,6 +1,6 @@
 ---
 name: review-prs
-description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments only for blocking issues, a paste-ready final comment per PR that is always included, and a short summary if asked. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
+description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments for must-fix issues, questions and a few non-blocking suggestions, each led by an emoji and written in plain words, a paste-ready final comment per PR that is always included, and a short summary if asked. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
 ---
 
 # Review PRs
@@ -28,13 +28,31 @@ Review each PR only against its own base so a change is never flagged twice.
 ## 3. Review
 
 - If the diffs total under ~1000 lines, read them yourself. For bigger ones, use one subagent per PR (sonnet or lower).
-- Report only blocking issues: bugs, crashes, data loss, security, broken build or tests, callers broken by removed or renamed symbols, or a clear break of the repo's CLAUDE.md rules. Leave out style, naming, and nice-to-haves entirely.
+- Blocking issues: bugs, crashes, data loss, security, broken build or tests, callers broken by removed or renamed symbols, or a clear break of the repo's CLAUDE.md rules.
+- Non-blocking suggestions: at most 2 per PR, only where a user or the next developer would notice the difference (clearer code, a missing test for a case that matters, a simpler way to do the same thing). Skip pure style and naming preferences.
 - Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behaviour with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker.
 - Check across the stack: a later PR relying on something missing earlier, or an earlier PR that stays broken until a later one lands.
 
 ## 4. Report (in chat)
 
-One line per PR: `#<n> <title> — ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several. Under it, paste-ready comments only if something blocks: `file:line — <1-2 sentences: issue + small reason, or a question>`. Then a few short bullets on what was checked, and the limits (no CI status or existing comments without `gh`, nothing built locally). Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`. Close the report with the final comment for each PR (section 6). It's always included, not only when asked.
+One line per PR: `#<n> <title> — ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several. Under it, paste-ready comments if there's anything to say, written as in "Writing comments" below: `file:line`, then the comment. List 🔴 first, then ❓, then 💡. Suggestions alone never move a PR off ✅. Then a few short bullets on what was checked, and the limits (no CI status or existing comments without `gh`, nothing built locally). Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`. Close the report with the final comment for each PR (section 6). It's always included, not only when asked.
+
+### Writing comments
+
+Applies to every comment, the final one included.
+
+- Start with one emoji, then the text:
+  - 🔴 must fix before merge (a real bug, crash, data loss, broken build)
+  - ❓ question, when something couldn't be verified
+  - 💡 suggestion, non-blocking, fine to skip or do later
+- Mostly the why: what happens to a user or the next developer if it stays as it is. Lead with the effect, then the fix in a few words.
+- Everyday words, no technical or AI jargon: "the list shows twice if you tap fast", not "race condition on re-render". Use code names in backticks only when needed to point at the thing.
+- One or two short sentences.
+
+Examples:
+
+- `🔴 If the request fails, the spinner never goes away and the user is stuck. Could we hide it in the error case too?`
+- `💡 This works, but keeping the date logic in one helper would mean fixing it in one place next time. Fine as a follow-up.`
 
 ## 5. Approval trade-off (per PR, in the report)
 
@@ -50,7 +68,8 @@ Keep it to three lines per PR, with no hedging. If a PR is refactor-only with te
 
 One paste-ready comment per PR, whatever the verdict, at the end of the section 4 report.
 
-- ✅ OK to merge: open with "LGTM", then add one or both, briefly: the payoff in plain words if users or developers will notice it (for example "so we can get this new behaviour now, nice!"), or a one-line restatement of what the PR does, to show the change was understood.
+- Open with the verdict emoji (✅, ⚠️ or ❌).
+- ✅ OK to merge: "✅ LGTM", then add one or both, briefly: the payoff in plain words if users or developers will notice it (for example "so we can get this new behaviour now, nice!"), or a one-line restatement of what the PR does, to show the change was understood.
 - ⚠️ Merge after fix or ❌ Not yet: no LGTM. One or two sentences on what has to change before it can merge, pointing to the inline comments. Restate what the PR does if that helps.
 - Keep every comment to one or two short sentences. Plain, natural English, no filler, no AI attribution.
 - Describe the change exactly as the diff shows it. A new property on an existing event isn't a "new event". When the user's wording and the diff disagree, follow the diff and flag the difference outside the comment.
@@ -61,6 +80,8 @@ One paste-ready comment per PR, whatever the verdict, at the end of the section 
   - No "it's not X, it's Y" or "less X, more Y" contrasts. Say the point directly.
   - No opener other than LGTM ("Good catch", "Great question") and no closing recap.
   - Plain words over tell-words: delve, robust, seamless, crucial, comprehensive, leverage (say "use"), ensure (say "make sure", or cut it).
+  - No technical jargon: regression, edge case, race condition, idempotent, side effect, refactor. Say what happens instead.
+  - Every comment starts with its emoji.
   - Don't force groups of three. At most one hedge per sentence, and none on a claim you've verified.
   - Leave quoted text, code and identifiers as they are.
 
