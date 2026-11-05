@@ -1,6 +1,6 @@
 ---
 name: review-prs
-description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments for must-fix issues, questions and a few non-blocking suggestions, each led by an emoji and written in plain words, a paste-ready final comment per PR that is always included, and a short summary if asked. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
+description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments for must-fix issues, questions and a few non-blocking suggestions, each led by an emoji, written in plain words and kept short, with a note for the user on why each was raised, a paste-ready final comment per PR that is always included, and a short summary if asked. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
 ---
 
 # Review PRs
@@ -27,7 +27,7 @@ Review each PR only against its own base so a change is never flagged twice.
 
 ## 3. Review
 
-- If the diffs total under ~1000 lines, read them yourself. For bigger ones, use one subagent per PR (sonnet or lower).
+- If the diffs total under ~1000 lines, read them yourself. For bigger ones, use one subagent per PR (sonnet or lower). Subagents return findings with `file:line` and evidence, not comment text. You write every comment and note yourself, following "Writing comments".
 - Blocking issues: bugs, crashes, data loss, security, broken build or tests, callers broken by removed or renamed symbols, or a clear break of the repo's CLAUDE.md rules.
 - Non-blocking suggestions: at most 2 per PR, only where a user or the next developer would notice the difference (clearer code, a missing test for a case that matters, a simpler way to do the same thing). Skip pure style and naming preferences.
 - Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behaviour with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker.
@@ -35,7 +35,16 @@ Review each PR only against its own base so a change is never flagged twice.
 
 ## 4. Report (in chat)
 
-One line per PR: `#<n> <title> — ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several. Under it, paste-ready comments if there's anything to say, written as in "Writing comments" below: `file:line`, then the comment. List 🔴 first, then ❓, then 💡. Suggestions alone never move a PR off ✅. Then a few short bullets on what was checked, and the limits (no CI status or existing comments without `gh`, nothing built locally). Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`. Close the report with the final comment for each PR (section 6). It's always included, not only when asked.
+One line per PR: `#<n> <title> — ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several. Under it, paste-ready comments if there's anything to say, written as in "Writing comments" below. List 🔴 first, then ❓, then 💡. Each comment uses this shape:
+
+```
+`file:line`
+> 🔴 <paste-ready comment>
+
+Why: <for the user, never pasted>
+```
+
+The `Why:` note is for the user only. Every comment gets one, the final comment included. In one to three plain sentences, say what you found, how you checked it (callers grepped, implementation read, compared with the other platform) and what happens if it's ignored. This is where the technical detail and evidence go, so the comment itself can stay short. Write it so the user could defend the comment if the author pushes back. Suggestions alone never move a PR off ✅. Then a few short bullets on what was checked, and the limits (no CI status or existing comments without `gh`, nothing built locally). Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`. Close the report with the final comment for each PR (section 6). It's always included, not only when asked.
 
 ### Writing comments
 
@@ -45,14 +54,38 @@ Applies to every comment, the final one included.
   - 🔴 must fix before merge (a real bug, crash, data loss, broken build)
   - ❓ question, when something couldn't be verified
   - 💡 suggestion, non-blocking, fine to skip or do later
-- Mostly the why: what happens to a user or the next developer if it stays as it is. Lead with the effect, then the fix in a few words.
+- Say why, not what. The author can see the code, so don't describe what it does or restate the diff. Say what happens to a user or the next developer if it stays as it is, then the fix in a few words.
+- Don't explain how it goes wrong inside the code (call chains, render cycles, internals). That goes in the `Why:` note.
+- Two short sentences at most, roughly 30 words. If it needs more, the rest belongs in the note.
+- Friendly, as to a colleague: a question or "could we" over an instruction.
 - Everyday words, no technical or AI jargon: "the list shows twice if you tap fast", not "race condition on re-render". Use code names in backticks only when needed to point at the thing.
-- One or two short sentences.
 
 Examples:
 
 - `🔴 If the request fails, the spinner never goes away and the user is stuck. Could we hide it in the error case too?`
 - `💡 This works, but keeping the date logic in one helper would mean fixing it in one place next time. Fine as a follow-up.`
+
+Too long, and mostly the what:
+
+> 🔴 `fetchItems` is called inside the effect without a cleanup, so when `filter` changes the previous promise can resolve after the new one and `setItems` overwrites the fresh results with stale data, which is a race condition. You should add an `AbortController` or an ignore flag in the cleanup function.
+
+Better:
+
+> 🔴 If someone changes the filter quickly, the list can end up showing results for the old filter. Could we ignore responses that arrive after the filter has changed?
+>
+> Why: the effect has no cleanup, so an older request can resolve last and overwrite the newer results. An ignore flag or `AbortController` in the cleanup fixes it.
+
+**Style pass.** Check every comment, the final one included, before handing it over and fix failures in place, without mentioning them:
+
+- No em dashes outside code, commands and paths. Use a comma, full stop, colon or brackets.
+- No "it's not X, it's Y" or "less X, more Y" contrasts. Say the point directly.
+- No opener other than LGTM ("Good catch", "Great question") and no closing recap.
+- Plain words over tell-words: delve, robust, seamless, crucial, comprehensive, leverage (say "use"), ensure (say "make sure", or cut it).
+- No technical jargon: regression, edge case, race condition, idempotent, side effect, refactor. Say what happens instead.
+- No sentence that only describes what the code does.
+- Every comment starts with its emoji and has a `Why:` note under it.
+- Don't force groups of three. At most one hedge per sentence, and none on a claim you've verified.
+- Leave quoted text, code and identifiers as they are.
 
 ## 5. Approval trade-off (per PR, in the report)
 
@@ -75,15 +108,8 @@ One paste-ready comment per PR, whatever the verdict, at the end of the section 
 - Describe the change exactly as the diff shows it. A new property on an existing event isn't a "new event". When the user's wording and the diff disagree, follow the diff and flag the difference outside the comment.
 - LGTM is the expected opening, so vary only what comes after it. Don't reuse the same wording or sentence pattern across PRs.
 - Only praise something that matters to a reader. Don't call out things with no visible effect (for example "now read-only") unless you can say why it helps in a few words.
-- **Style pass.** Check every comment, inline ones included, before handing it over and fix failures in place, without mentioning them:
-  - No em dashes outside code, commands and paths. Use a comma, full stop, colon or brackets.
-  - No "it's not X, it's Y" or "less X, more Y" contrasts. Say the point directly.
-  - No opener other than LGTM ("Good catch", "Great question") and no closing recap.
-  - Plain words over tell-words: delve, robust, seamless, crucial, comprehensive, leverage (say "use"), ensure (say "make sure", or cut it).
-  - No technical jargon: regression, edge case, race condition, idempotent, side effect, refactor. Say what happens instead.
-  - Every comment starts with its emoji.
-  - Don't force groups of three. At most one hedge per sentence, and none on a claim you've verified.
-  - Leave quoted text, code and identifiers as they are.
+- Its `Why:` note says in a line why you gave that verdict.
+- Run the style pass from "Writing comments" on it.
 
 ## 7. Summary (when asked)
 
