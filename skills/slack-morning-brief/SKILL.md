@@ -1,6 +1,6 @@
 ---
 name: slack-morning-brief
-description: Set up or run a personal weekday Slack brief of decisions, launch go/no-gos, scope changes and incidents across the workspace, before the workday starts.
+description: Set up or run a personal weekday Slack brief of decisions, launch go/no-gos, scope changes and incidents across the workspace, before the workday starts. Use when the user says "morning brief", "what happened overnight in Slack", or runs /slack-morning-brief.
 ---
 
 # Slack morning brief
@@ -27,8 +27,9 @@ Then:
    - Schedule: start time minus 35 minutes, as `CRON_TZ=<time zone> <min> <hour> * * 1-5`. If the tool's schema takes the time zone another way, follow the schema.
    - Push notification on.
    - Prompt: the run instructions from section 2 with every placeholder filled in, so it stands alone with no reference to this skill.
-3. If they're not available, print the filled prompt in a code block with the cron line, and tell the user how to create the task themselves: a new scheduled task in Cowork, or `/schedule` in Claude Code.
-4. Tell the user in one line that local scheduled tasks only run while the computer is awake and the app is open. A missed run fires on wake, so the brief arrives late rather than never.
+3. Otherwise, in Claude Code with the `schedule` skill available, create the brief as a routine with that skill, on the same schedule with the same filled prompt. The brief reads only Slack and writes no local files, so a cloud routine can run it.
+4. If neither is available, print the filled prompt in a code block with the cron line, and tell the user how to create the task themselves: a new scheduled task in Cowork, or `/schedule` in Claude Code.
+5. For a Cowork task, tell the user in one line that local scheduled tasks only run while the computer is awake and the app is open. A missed run fires on wake, so the brief arrives late rather than never.
 
 ## 2. Run instructions
 
