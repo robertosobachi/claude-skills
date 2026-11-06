@@ -48,14 +48,15 @@ Before touching code, run the relevant tests once with the commands from `CLAUDE
 1. **Build** up to the user's piece, if any, and stop there for their choice. Then finish.
 2. **Run** the relevant tests and the linter on changed files, using the commands from `CLAUDE.md`. Report what ran and what couldn't. If the repo has no tests or linter, say so.
 3. **Mutation-test every new assertion:** break the code it guards, confirm the test goes red, revert. A green run only counts if it could have gone red. If tests can't run here, give the user the list of mutations to try.
-4. **Run the review conventions checklist**, if the repo has one, on this PR's diff (against its parent for a stacked PR), item by item. Fix what fails.
-5. **Review it as a reviewer would.** Re-read the diff hunting for gaps between pieces that each look right alone (ordering, which source wins, unhandled nil, a caller outside the diff). Trim anything a reviewer would ask to cut.
-6. **Hand over**, in this order:
+4. **Check the UI**, if the diff changes what a user sees. With a browser tool (Playwright, or a browser or Chrome DevTools MCP), drive the changed flow in the running app, compare it with what the plan says it should do, and attach a screenshot or short trace reference to the handover. If the app can't run here or there's no browser tool, say so and give the user the steps to check by hand.
+5. **Run the review conventions checklist**, if the repo has one, on this PR's diff (against its parent for a stacked PR), item by item. Fix what fails.
+6. **Review it in a fresh context.** Spawn one subagent. Use the session's model or lower, and follow any model policy in the user's `CLAUDE.md`. Give it only the diff (against the parent for a stacked PR), this PR's section of the plan and the review conventions, if any. It hunts for gaps between pieces that each look right alone (ordering, which source wins, unhandled nil, a caller outside the diff) and anything a reviewer would ask to cut, and returns findings with `file:line`. Check each finding against the code, fix the valid ones and drop the rest. If subagents aren't available, re-read the diff yourself for the same gaps and say so in the handover.
+7. **Hand over**, in this order:
    - The files to stage, by name, and any unrelated drift to `git restore`.
    - One commit title in the format the user's instructions or the repo set. One commit per PR unless the user or repo says otherwise.
    - The PR title and description, written to the `pr-description` skill's Write it and Rules sections if it's installed, otherwise as a plain summary, the changes as bullets and the blast radius as bullets. Add a bullet for each departure from the nearest precedent, only where a reviewer would otherwise ask.
    - For a stacked PR whose parent moved: the restack commands (`git rebase --onto <new parent> <old parent head> <branch>`, then `git push --force-with-lease`).
-7. **Record:** update the plan's section 0 and add a dated session-log entry with what was built, deviations from the approved plan and why, what ran, and what is pending. If another session will pick up the next PR, offer to write its prompt with the `handover-prompt` skill if it's installed.
+8. **Record:** update the plan's section 0 and add a dated session-log entry with what was built, deviations from the approved plan and why, what ran, and what is pending. If another session will pick up the next PR, offer to write its prompt with the `handover-prompt` skill if it's installed.
 
 ## Stop conditions
 
