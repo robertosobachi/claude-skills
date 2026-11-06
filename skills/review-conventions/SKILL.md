@@ -25,7 +25,7 @@ One document per repo that collects what reviewers ask for and why, so the same 
 
 1. **Gather sources:** review notes and reply drafts in the plans folder; the user's last 10 to 20 merged PRs and their review comments (`gh pr list --author @me --state merged --limit 20`, then `gh api --paginate repos/{owner}/{repo}/pulls/<n>/comments`); any review rounds on design docs the user names. If `gh` fails, give the user the commands and ask them to paste the output. If `gh auth status` fails, or a call returns 404 for a repo you know exists, treat `gh` as unavailable. If there's no review history, say so; the doc starts from the seed rules and the user's answers. If the doc already exists, switch to Fold.
 2. **Seed** with [references/seed-rules.md](references/seed-rules.md). Keep a seed rule only if it fits this repo, and mark rules the history shows reviewers actually asked for.
-3. **Add the repo's own rules** from the sources: each reasoned comment that could recur becomes a rule. Merge duplicates. Check every "In <repo>" note against the code (`git grep`) before writing it.
+3. **Add the repo's own rules** from the sources: each reasoned comment that could recur becomes a rule. Merge duplicates. Check every "In <repo>" note against the code (`git grep`) before writing it. Propose an enforcement for each rule as in Fold step 3.
 4. **Ask about house style** the sources don't settle: test framework and style, logging and telemetry conventions, the PR description shape, and commit format. Point to `CLAUDE.md` rather than copying it.
 5. **Write the doc** in the shape below, once `git check-ignore -v <path>` confirms the path is ignored (ask otherwise). Keep each rule short.
 6. **Report:** the sections, which sources fed which rules, and the source files the doc can replace (for the user to delete).
@@ -34,14 +34,15 @@ One document per repo that collects what reviewers ask for and why, so the same 
 
 1. Take the new comments from the user, the latest `answer-review` output, or a PR number (fetch its comments as in Create).
 2. For each comment that has a reason and could recur, find the section it belongs in. Tighten an existing rule if one covers it. Otherwise add a rule with its reason, and a checklist line that cites it.
-3. Skip one-offs and comments without a reason. List what you skipped and why.
-4. If a reviewer's preference contradicts an existing rule, keep both visible: note whose preference it is in the reviewer appendix and ask the user which wins in this repo.
-5. Report each change with its source (PR and comment link) and the rule number.
+3. For each new or tightened rule, decide whether a machine can check it: a pattern, an import boundary, a file or function size limit, a banned API, a required wrapper such as a timeout around every fetch. If it can, add an **Enforce:** line under the rule proposing a lint rule, a test over the source or a git hook, using tools the repo already has. Its failure message states the fix and cites the rule number. A checklist line can be skipped; a check fails every time. Don't write or install it; the user decides. Keep the checklist line until the check exists, then mark it enforced by that check.
+4. Skip one-offs and comments without a reason. List what you skipped and why.
+5. If a reviewer's preference contradicts an existing rule, keep both visible: note whose preference it is in the reviewer appendix and ask the user which wins in this repo.
+6. Report each change with its source (PR and comment link), the rule number and any proposed enforcement.
 
 ## Check
 
 1. Read the doc's checklist. If there's no doc, say so, offer Create, and use the checklist in [references/seed-rules.md](references/seed-rules.md) for now. Then read the diff: run `git merge-base <base> HEAD`, then `git diff <merge-base>`, which covers the branch's commits and uncommitted changes to tracked files, and add untracked files from `git status --short`. The base is the parent branch for a stacked PR, otherwise the default branch from `git symbolic-ref --short refs/remotes/origin/HEAD`. If there's nothing, say there's nothing to check and stop.
-2. Go through the checklist item by item. For each, say pass, fail (with `file:line` and the fix), or not applicable.
+2. Go through the checklist item by item. Skip items marked enforced by a check that already ran green on this diff, and name the check; if you don't know it ran, check the item. For the rest, say pass, fail (with `file:line` and the fix), or not applicable.
 3. Fix nothing yourself unless the user asks. End with the failures in order of how likely a reviewer is to comment.
 
 ## Doc shape
@@ -61,6 +62,7 @@ summary: Rules reviewers have asked for in <repo>, with reasons, and a pre-PR ch
 ### 1.1 <Rule as an instruction>
 <The rule in one to three sentences. Then the reason.>
 **In <repo>:** <where the mechanism lives, if any>
+**Enforce:** <optional: lint rule, source test or git hook, its failure message, and "proposed" or the file it lives in>
 
 ## 2. Structure and naming
 ## 3. Logging and jobs
@@ -71,6 +73,7 @@ summary: Rules reviewers have asked for in <repo>, with reasons, and a pre-PR ch
 
 ## 8. Pre-PR checklist
 - [ ] <check> (<rule numbers>)
+- [ ] <check> (<rule numbers>, enforced by <check>)
 
 ## Appendix: reviewer profiles
 ### <reviewer>
