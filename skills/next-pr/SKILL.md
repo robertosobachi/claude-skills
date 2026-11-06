@@ -43,6 +43,8 @@ Files, tests, and the order you'd build them, plus anything that touches shared 
 
 ## After approval
 
+Before touching code, run the relevant tests once with the commands from `CLAUDE.md` and keep the result as the baseline. A test that already fails there is failing for a reason outside this PR.
+
 1. **Build** up to the user's piece, if any, and stop there for their choice. Then finish.
 2. **Run** the relevant tests and the linter on changed files, using the commands from `CLAUDE.md`. Report what ran and what couldn't. If the repo has no tests or linter, say so.
 3. **Mutation-test every new assertion:** break the code it guards, confirm the test goes red, revert. A green run only counts if it could have gone red. If tests can't run here, give the user the list of mutations to try.
@@ -57,4 +59,4 @@ Files, tests, and the order you'd build them, plus anything that touches shared 
 
 ## Stop conditions
 
-Stop and ask when: the plan and the code disagree on something settled, a requirement looks ambiguous, the user's piece is reached, a test fails for a reason outside this PR, or the diff grows past what the plan said this PR is.
+Stop and ask when: the plan and the code disagree on something settled, a requirement looks ambiguous, the user's piece is reached, a test fails for a reason outside this PR (it already failed in the baseline), or the diff grows past what the plan said this PR is.
