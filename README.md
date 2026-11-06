@@ -70,6 +70,10 @@ Chat in Claude Desktop and claude.ai doesn't read `~/.claude/skills`. Upload the
 
 [`evals/review-prs/`](evals/review-prs/README.md) is a regression check for `review-prs`: fixed cases, a checklist and several runs per skill version, so an edit to the skill can be compared with the one before it. The method lives here, the cases live in a private repo you point it at. It sits outside `skills/`, so installs don't get it.
 
+## Lint
+
+Run `bash lint.sh` after changing a skill. It runs `claude plugin validate skills` if `claude` is installed, then checks what drifts without anyone noticing: each skill's `name` matches its folder, descriptions have no `<` (the Desktop upload rejects them), `argument-hint` values are quoted, every skill keeps its "Don't edit this skill's files" rule, the style pass and push-risk blocks copied across skills stay identical, and the README table matches `skills/`. It's manual, so a broken lint never blocks an install.
+
 ## Licence
 
 [MIT](LICENSE)
