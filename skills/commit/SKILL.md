@@ -1,8 +1,8 @@
 ---
 name: commit
-description: Stage and commit the current work, one commit per separate piece of work, each with a gitmoji title, and rate the push risk of each. Never pushes.
+description: Stage and commit the current work, one commit per separate piece of work, each with a title in the repo's commit format, and rate the push risk of each. Never pushes.
 disable-model-invocation: true
-allowed-tools: Bash(git add *) Bash(git commit *) Bash(git diff *) Bash(git status *) Bash(git log *)
+allowed-tools: Bash(git add *) Bash(git commit *) Bash(git diff *) Bash(git status *) Bash(git log *) Bash(git symbolic-ref *)
 ---
 
 ## Working tree
@@ -11,27 +11,33 @@ allowed-tools: Bash(git add *) Bash(git commit *) Bash(git diff *) Bash(git stat
 
 ### Staged
 
-!`git diff --staged`
+!`git diff --staged --stat`
 
 ### Unstaged
 
-!`git diff`
+!`git diff --stat`
 
 ## Your task
 
 Commit the current work. `$ARGUMENTS`, if given, says what to commit or how to split it.
 
+Only the file stats are above. Before grouping or titling, read what you need: `git diff --staged`, or `git diff -- <paths>` for the files in a group. Read untracked files directly.
+
 1. If anything is staged, commit only the staged changes, as one commit, and leave everything else alone.
-2. Otherwise, group the unstaged changes and untracked files above into separate pieces of work, such as a feature and an unrelated docs update. Read untracked files if you need to see what they are. Files that only make sense together stay in one group. When in doubt, use fewer groups.
+2. Otherwise, group the unstaged changes and untracked files above into separate pieces of work, such as a feature and an unrelated docs update. Files that only make sense together stay in one group. When in doubt, use fewer groups.
 3. Groups are whole files. If a file holds changes for two groups, put it with the one it mostly belongs to.
 4. Order the groups so each commit builds on the ones before it. For each group, run `git add -- <paths>`, then `git commit -m '<title>'`, escaping any `'` in the title as `'\''`.
 
-Title format: `:<gitmoji>: <type>: <Subject>`
+Title format, first match wins:
 
-- `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
-- `<type>`: one conventional commit type: feat, fix, refactor, docs, test, chore, perf, style, build or ci.
-- `<Subject>`: imperative mood, capitalised, no full stop, technically specific.
-- 72 characters at most, counting the alias as typed (`:sparkles:` is 10).
+1. A commit format rule in the repo's `CLAUDE.md`.
+2. The majority shape of `git log --oneline -20 origin/<default>`, where `git symbolic-ref --short refs/remotes/origin/HEAD` names the default branch (use the current branch if that fails). Match it: gitmoji or not, conventional type or not, ticket key or not, capitalisation.
+3. Neither settles it: `:<gitmoji>: <type>: <Subject>`
+   - `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
+   - `<type>`: one conventional commit type: feat, fix, refactor, docs, test, chore, perf, style, build or ci.
+   - `<Subject>`: imperative mood, capitalised, no full stop, technically specific.
+
+Whatever the format, 72 characters at most, counting a gitmoji alias as typed (`:sparkles:` is 10).
 
 If there is nothing to commit, say so and stop.
 

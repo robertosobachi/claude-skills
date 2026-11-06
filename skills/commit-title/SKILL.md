@@ -1,8 +1,8 @@
 ---
 name: commit-title
-description: Write a gitmoji commit title for the current work, or one title per separate piece of work, and rate the push risk of each.
+description: Write a commit title in the repo's format for the current work, or one title per separate piece of work, and rate the push risk of each.
 disable-model-invocation: true
-allowed-tools: Bash(git diff *) Bash(git status *) Bash(${CLAUDE_SKILL_DIR}/copy.sh *)
+allowed-tools: Bash(git diff *) Bash(git status *) Bash(git log *) Bash(git symbolic-ref *) Bash(${CLAUDE_SKILL_DIR}/copy.sh *)
 ---
 
 ## Working tree
@@ -11,11 +11,11 @@ allowed-tools: Bash(git diff *) Bash(git status *) Bash(${CLAUDE_SKILL_DIR}/copy
 
 ### Staged
 
-!`git diff --staged`
+!`git diff --staged --stat`
 
 ### Unstaged
 
-!`git diff`
+!`git diff --stat`
 
 ## Your task
 
@@ -23,17 +23,22 @@ Write a commit title for the current work. Describe the first of these that exis
 
 1. `$ARGUMENTS`, if given.
 2. The staged changes above.
-3. The unstaged changes and untracked files above. Read untracked files if you need to see what they are.
+3. The unstaged changes and untracked files above.
 4. The work done in this conversation.
 
-Format: `:<gitmoji>: <type>: <Subject>`
+Only the file stats are above. Before grouping or titling, read what you need: `git diff --staged`, or `git diff -- <paths>` for the files in a piece. Read untracked files directly.
 
-- `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
-- `<type>`: one conventional commit type: feat, fix, refactor, docs, test, chore, perf, style, build or ci.
-- `<Subject>`: imperative mood, capitalised, no full stop, technically specific.
-- 72 characters at most, counting the alias as typed (`:sparkles:` is 10).
+Format, first match wins:
 
-Example: `:tada: chore: Add README and MIT licence`
+1. A commit format rule in the repo's `CLAUDE.md`.
+2. The majority shape of `git log --oneline -20 origin/<default>`, where `git symbolic-ref --short refs/remotes/origin/HEAD` names the default branch (use the current branch if that fails). Match it: gitmoji or not, conventional type or not, ticket key or not, capitalisation.
+3. Neither settles it: `:<gitmoji>: <type>: <Subject>`
+   - `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
+   - `<type>`: one conventional commit type: feat, fix, refactor, docs, test, chore, perf, style, build or ci.
+   - `<Subject>`: imperative mood, capitalised, no full stop, technically specific.
+   - Example: `:tada: chore: Add README and MIT licence`
+
+Whatever the format, 72 characters at most, counting a gitmoji alias as typed (`:sparkles:` is 10).
 
 If there is nothing to describe, say so and stop.
 
@@ -62,7 +67,7 @@ Commands must paste and run as-is:
 
 With one title, copy it to the clipboard by running `${CLAUDE_SKILL_DIR}/copy.sh '<title>'`, escaping any `'` in the title as `'\''`. Run it once and don't retry it outside the sandbox. Output the title in a code block. If the copy failed, add one line under it: `Not copied, run /copy.` Then output the command in a second code block: `git commit -m "<title>"` alone if the changes are staged, otherwise `git add <files>` on one line and `git commit -m "<title>"` on the next. Put the risk line under it, as plain text.
 
-With several titles, don't copy. Output one code block per piece, in commit order, holding `git add <files>` on one line and `git commit -m "<title>"` on the next. Under each block put its risk line, then, if a file also holds changes for another piece, say so in one more plain line. Never put either inside a block. If `/commit` is among the available skills, end with one line: `Run /commit to stage and commit them.`
+With several titles, don't copy. Output one code block per piece, in commit order, holding `git add <files>` on one line and `git commit -m "<title>"` on the next. Under each block put its risk line, then, if a file also holds changes for another piece, say so in one more plain line. Never put either inside a block. End with one line: `If /commit is installed, run it to stage and commit them.`
 
 No body, no explanation beyond the risk lines. Do not run `git add` or `git commit`.
 
