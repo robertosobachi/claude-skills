@@ -21,6 +21,7 @@ Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
    - Otherwise, use the repo's default branch from `git symbolic-ref --short refs/remotes/origin/HEAD`. Don't assume `main`. If `git log --oneline <default>..HEAD` holds commits that aren't this branch's work, the branch is stacked: ask which branch it stacks on.
 3. What changed: `git log <base>..HEAD` with full commit bodies, `git diff --stat <base>...HEAD`, then `git diff <base>...HEAD`.
 4. Where the why lives: the commit bodies, the conversation, the repo's plan docs (e.g. `docs/plans/`), the PR description and the code around each hunk.
+5. What the author already posted: if a PR exists and `gh` works, `gh api repos/{owner}/{repo}/pulls/<n>/comments --jq '.[] | select(.user.login == "<me>")'`, where `<me>` comes from `gh api user --jq .login`. Skip the blocks those comments already cover.
 
 ## 2. Pick the blocks
 
