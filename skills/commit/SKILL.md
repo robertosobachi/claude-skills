@@ -1,8 +1,8 @@
 ---
 name: commit
-description: Stage and commit the current work, one commit per separate piece of work, each with a title in the repo's commit format, and rate the push risk of each. Never pushes.
+description: Stage and commit the current work, one commit per separate piece of work, each with a gitmoji title, and rate the push risk of each. Never pushes.
 disable-model-invocation: true
-allowed-tools: Bash(git add *) Bash(git commit *) Bash(git diff *) Bash(git status *) Bash(git log *) Bash(git symbolic-ref *)
+allowed-tools: Bash(git add *) Bash(git commit *) Bash(git diff *) Bash(git status *) Bash(git log *)
 ---
 
 ## Working tree
@@ -28,16 +28,11 @@ Only the file stats are above. Before grouping or titling, read what you need: `
 3. Groups are whole files. If a file holds changes for two groups, put it with the one it mostly belongs to.
 4. Order the groups so each commit builds on the ones before it. For each group, run `git add -- <paths>`, then `git commit -m '<title>'`, escaping any `'` in the title as `'\''`.
 
-Title format, first match wins:
+Title format: `:<gitmoji>: <Subject>`
 
-1. A commit format rule in the repo's `CLAUDE.md`.
-2. The majority shape of `git log --oneline -20 origin/<default>`, where `git symbolic-ref --short refs/remotes/origin/HEAD` names the default branch (use the current branch if that fails). Match it: gitmoji or not, conventional type or not, ticket key or not, capitalisation.
-3. Neither settles it: `:<gitmoji>: <type>: <Subject>`
-   - `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
-   - `<type>`: one conventional commit type: feat, fix, refactor, docs, test, chore, perf, style, build or ci.
-   - `<Subject>`: imperative mood, capitalised, no full stop, technically specific.
-
-Whatever the format, 72 characters at most, counting a gitmoji alias as typed (`:sparkles:` is 10).
+- `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
+- `<Subject>`: imperative mood, capitalised, no full stop, technically specific.
+- 72 characters at most, counting the alias as typed (`:sparkles:` is 10).
 
 If there is nothing to commit, say so and stop.
 

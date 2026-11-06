@@ -1,8 +1,8 @@
 ---
 name: commit-title
-description: Write a commit title in the repo's format for the current work, or one title per separate piece of work, and rate the push risk of each.
+description: Write a gitmoji commit title for the current work, or one title per separate piece of work, and rate the push risk of each.
 disable-model-invocation: true
-allowed-tools: Bash(git diff *) Bash(git status *) Bash(git log *) Bash(git symbolic-ref *) Bash(${CLAUDE_SKILL_DIR}/copy.sh *)
+allowed-tools: Bash(git diff *) Bash(git status *) Bash(${CLAUDE_SKILL_DIR}/copy.sh *)
 ---
 
 ## Working tree
@@ -28,17 +28,13 @@ Write a commit title for the current work. Describe the first of these that exis
 
 Only the file stats are above. Before grouping or titling, read what you need: `git diff --staged`, or `git diff -- <paths>` for the files in a piece. Read untracked files directly.
 
-Format, first match wins:
+Format: `:<gitmoji>: <Subject>`
 
-1. A commit format rule in the repo's `CLAUDE.md`.
-2. The majority shape of `git log --oneline -20 origin/<default>`, where `git symbolic-ref --short refs/remotes/origin/HEAD` names the default branch (use the current branch if that fails). Match it: gitmoji or not, conventional type or not, ticket key or not, capitalisation.
-3. Neither settles it: `:<gitmoji>: <type>: <Subject>`
-   - `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
-   - `<type>`: one conventional commit type: feat, fix, refactor, docs, test, chore, perf, style, build or ci.
-   - `<Subject>`: imperative mood, capitalised, no full stop, technically specific.
-   - Example: `:tada: chore: Add README and MIT licence`
+- `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
+- `<Subject>`: imperative mood, capitalised, no full stop, technically specific.
+- 72 characters at most, counting the alias as typed (`:sparkles:` is 10).
 
-Whatever the format, 72 characters at most, counting a gitmoji alias as typed (`:sparkles:` is 10).
+Example: `:tada: Add README and MIT licence`
 
 If there is nothing to describe, say so and stop.
 
