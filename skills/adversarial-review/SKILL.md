@@ -1,6 +1,6 @@
 ---
 name: adversarial-review
-description: Adversarial pre-ship review of a PR, branch or file against its base. Four fresh-context reviewers (correctness, contracts, behaviour, tests) each try to prove the change wrong, then a fresh judge verifies every finding against the code and drops what has no evidence. Reports valid blockers and should-fix items with evidence, up to 5 nits, and unverifiable items. Read-only, never edits, commits, pushes or comments. Defaults to the current branch, uncommitted work included. Use when the user runs /adversarial-review [PR, branch or path] [base].
+description: Adversarial pre-ship review of a PR, branch or file against its base. Four fresh-context reviewers try to prove the change wrong, then a fresh judge keeps only the findings the code backs up. Defaults to the current branch, uncommitted work included. Read-only, never edits, commits, pushes or comments. Use when the user runs /adversarial-review [PR, branch or path] [base].
 argument-hint: "[PR number | branch | path] [base branch]"
 ---
 

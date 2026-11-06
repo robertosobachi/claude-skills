@@ -1,6 +1,6 @@
 ---
 name: review-prs
-description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments for must-fix issues, questions and a few non-blocking suggestions, each led by an emoji, written in plain words and kept short, with a note for the user on why each was raised, a paste-ready final comment per PR that is always included, and a short summary if asked. Applies each repo's own CLAUDE.md, AGENTS.md and review conventions doc, scoped to the files they govern, and skips points already raised on the PR. Asks once whether to also run adversarial-review on the same PRs, and folds its verified findings into the comments. Never posts anything. Use when the user pastes PR URLs (or a local head ref and base) and says "review these PRs", "review PR <url>", or runs /review-prs.
+description: Light, unblocking review of one or more GitHub PRs, stacked ones included, or of a local branch with "quick [head] [base]". Gives a merge verdict, an approval trade-off and short, emoji-led, paste-ready comments, applying the repo's own CLAUDE.md, AGENTS.md and review conventions. Can add an adversarial-review pass. Never posts anything. Use when the user pastes PR URLs (or a local head ref and base) and says "review these PRs", "review PR [url]", or runs /review-prs.
 argument-hint: "[PR URLs | quick <head> <base>]"
 ---
 

@@ -2,7 +2,7 @@
 name: which-skill
 description: Suggest the skill to start the current work with, chosen from every skill available in the session.
 disable-model-invocation: true
-argument-hint: [task]
+argument-hint: "[task]"
 allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/context.sh)
 ---
 

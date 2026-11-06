@@ -1,6 +1,6 @@
 ---
 name: answer-review
-description: Work through review comments on your own PR or design doc (RFC). Collects the open threads, checks each reviewer's premise against the code, classifies it as blocking or not, gives a verdict (change, follow-up, no change, or ask me), asks for the reason behind unreasoned comments that imply a standard, drafts the exact change and a short reply, and tracks every thread to an end state. For docs it also produces old/new edit tables in page order. Never posts, resolves, commits or pushes. Use when the user says "I got review comments", "answer the review", "reply to round N", pastes review comments, or runs /answer-review <PR or doc URL>. Not for reviewing someone else's PR or doc.
+description: Work through review comments on your own PR or design doc (RFC). Checks each reviewer's premise against the code, gives a verdict per thread, drafts the change and a short reply, and tracks every thread to an end state. Never posts, resolves, commits or pushes. Use when the user says "I got review comments", "answer the review", "reply to round N", pastes review comments, or runs /answer-review [PR or doc URL]. Not for reviewing someone else's PR or doc.
 argument-hint: "<PR URL/number(s) or doc URL>"
 ---
 

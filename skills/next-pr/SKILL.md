@@ -1,6 +1,6 @@
 ---
 name: next-pr
-description: Build the next PR from an approved plan. Re-checks that PR's section of the plan against the code, writes an implementation plan and stops for approval, then builds, tests, mutation-tests every new assertion, runs the repo's review checklist, reviews the diff as a reviewer would and hands over the unstaged diff with a commit title, PR title and description. Updates the plan's current state and the session log. Never stages, commits or pushes. Use when a plan file with a PR list exists and the user says "next PR", "build PR <n> from the plan", or runs /next-pr.
+description: Build the next PR from an approved plan. Re-checks the plan against the code and stops for approval, then builds, tests, mutation-tests new assertions, reviews the diff and hands over the unstaged diff with a commit title, PR title and description. Never stages, commits or pushes. Use when a plan file with a PR list exists and the user says "next PR", "build PR [n] from the plan", or runs /next-pr.
 argument-hint: "[PR number or name from the plan]"
 ---
 

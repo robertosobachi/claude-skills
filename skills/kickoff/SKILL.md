@@ -1,6 +1,6 @@
 ---
 name: kickoff
-description: Start a new piece of work the same way every time. Reads the requirements and the epic, reads the repo's review conventions, finds the existing feature to copy, maps what changes and what differs, slices the work into independently reviewable PRs, records a practice baseline, writes the plan to a git-ignored plans folder and stops for approval before any code. Use when starting a feature, epic or ticket in an existing repo from a requirements page or ticket (not for writing the spec itself), or when the user runs /kickoff <requirements URL or ticket key>.
+description: Start a new piece of work in an existing repo from a requirements page or ticket. Reads the requirements, the review conventions and the existing feature to copy, slices the work into independently reviewable PRs, writes the plan to a git-ignored folder and stops for approval before any code. Use when starting a feature, epic or ticket (not for writing the spec itself), or when the user runs /kickoff [requirements URL or ticket key].
 argument-hint: "<requirements URL or ticket key>"
 ---
 
