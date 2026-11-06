@@ -32,11 +32,11 @@ Review each PR only against its own base so a change is never flagged twice.
 
 ## 3. Adversarial pass (ask first)
 
-Ask once, now, before reviewing, whether to add an adversarial pass. Use the question tool if there is one, otherwise ask one plain question and wait. In the question, list which PRs it would run on and which it would skip for being under ~50 changed lines, and say it costs 5 subagents per PR. Don't ask if the request already answers it: "with adversarial review", "adversarial" or "go deeper" mean yes, and "quick" or "just a light review" mean no.
+Ask once, now, before reviewing, whether to add an adversarial pass. Use the question tool if there is one, otherwise ask one plain question and wait. In the question, list which PRs it would run on and which it would skip, and say it costs 5 subagents per PR. A PR under ~50 changed lines is skipped only when it touches none of these high-risk areas: authentication, authorisation or permissions; payments or money movement; data migrations or schema; secrets, or config that reaches production; dependency bumps. Judge risk from the changed file paths and the diff, never the PR title. List each small PR kept for risk with the reason in a few words ("changes the token check", "bumps a dependency"). Don't ask if the request already answers it: "with adversarial review", "adversarial" or "go deeper" mean yes, and "quick" or "just a light review" mean no.
 
 If the answer is yes, run it after your own review in section 4, so your reading isn't shaped by its findings.
 
-- Skip PRs under ~50 changed lines and say so in one line.
+- Skip PRs under ~50 changed lines that touch none of the high-risk areas above, and say so in one line.
 - For each remaining PR, invoke the `adversarial-review` skill with the PR's head ref from section 2 (`refs/review/<n>` when it was fetched) as the target and that PR's own base from section 2 (the PR below it for stacked PRs), so nothing is flagged twice across the stack. Pass the PR title and body as the stated intent when you have them.
 - Treat the judge's verdicts as candidates for section 4, not as comments:
   - valid blocker: 🔴 if it meets the blocking list in section 4. Re-read the cited line first.
