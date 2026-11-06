@@ -40,7 +40,7 @@ One document per repo that collects what reviewers ask for and why, so the same 
 
 ## Check
 
-1. Read the doc's checklist. If there's no doc, say so, offer Create, and use the checklist in [references/seed-rules.md](references/seed-rules.md) for now. Then read the diff: `git diff` plus untracked files; if that's empty, `git diff <base>...HEAD`, where the base is the parent branch for a stacked PR, otherwise `git symbolic-ref --short refs/remotes/origin/HEAD`. If both are empty, say there's nothing to check and stop.
+1. Read the doc's checklist. If there's no doc, say so, offer Create, and use the checklist in [references/seed-rules.md](references/seed-rules.md) for now. Then read the diff: run `git merge-base <base> HEAD`, then `git diff <merge-base>`, which covers the branch's commits and uncommitted changes to tracked files, and add untracked files from `git status --short`. The base is the parent branch for a stacked PR, otherwise the default branch from `git symbolic-ref --short refs/remotes/origin/HEAD`. If there's nothing, say there's nothing to check and stop.
 2. Go through the checklist item by item. For each, say pass, fail (with `file:line` and the fix), or not applicable.
 3. Fix nothing yourself unless the user asks. End with the failures in order of how likely a reviewer is to comment.
 
