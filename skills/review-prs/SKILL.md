@@ -1,6 +1,6 @@
 ---
 name: review-prs
-description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments for must-fix issues, questions and a few non-blocking suggestions, each led by an emoji, written in plain words and kept short, with a note for the user on why each was raised, a paste-ready final comment per PR that is always included, and a short summary if asked. Optionally runs adversarial-review on the same PRs when asked, and folds its verified findings into the comments. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
+description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments for must-fix issues, questions and a few non-blocking suggestions, each led by an emoji, written in plain words and kept short, with a note for the user on why each was raised, a paste-ready final comment per PR that is always included, and a short summary if asked. Asks once whether to also run adversarial-review on the same PRs, and folds its verified findings into the comments. Never posts anything. Use when the user pastes PR URLs and says "review these PRs", "review PR <url>", or runs /review-prs.
 ---
 
 # Review PRs
@@ -33,12 +33,14 @@ Review each PR only against its own base so a change is never flagged twice.
 - Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behaviour with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker.
 - Check across the stack: a later PR relying on something missing earlier, or an earlier PR that stays broken until a later one lands.
 
-## 3b. Adversarial pass (only when asked)
+## 3b. Adversarial pass (ask first)
 
-Run this only when the user asks for it ("with adversarial review", "adversarial", "go deeper"). Never offer or ask by default. Do it after your own review in section 3, so your reading isn't shaped by its findings.
+Ask once, right after section 2 and before section 3 starts, whether to add an adversarial pass. Use the question tool if there is one, otherwise ask one plain question and wait. In the question, list which PRs it would run on and which it would skip for being under ~50 changed lines, and say it costs 5 subagents per PR. Don't ask if the request already answers it: "with adversarial review", "adversarial" or "go deeper" mean yes, and "quick" or "just a light review" mean no.
+
+If the answer is yes, run it after your own review in section 3, so your reading isn't shaped by its findings.
 
 - Skip PRs under ~50 changed lines and say so in one line.
-- For each remaining PR, invoke the `adversarial-review` skill with target `refs/review/<n>` and that PR's own base from section 2 (the PR below it for stacked PRs), so nothing is flagged twice across the stack.
+- For each remaining PR, invoke the `adversarial-review` skill with the PR's head ref from section 2 (`refs/review/<n>` when it was fetched) as the target and that PR's own base from section 2 (the PR below it for stacked PRs), so nothing is flagged twice across the stack. Pass the PR title and body as the stated intent when you have them.
 - Treat the judge's verdicts as candidates for section 3, not as comments:
   - valid blocker: 🔴 if it meets the blocking list in section 3. Re-read the cited line first.
   - valid should fix: 🔴 only if it meets that list, otherwise a 💡 that counts towards the 2 suggestions per PR.
@@ -72,13 +74,16 @@ Applies to every comment, the final one included.
 - Say why, not what. The author can see the code, so don't describe what it does or restate the diff. Say what happens to a user or the next developer if it stays as it is, then the fix in a few words.
 - Don't explain how it goes wrong inside the code (call chains, render cycles, internals). That goes in the `Why:` note.
 - Two short sentences at most, roughly 30 words. If it needs more, the rest belongs in the note.
-- Friendly, as to a colleague: a question or "could we" over an instruction.
-- Everyday words, no technical or AI jargon: "the list shows twice if you tap fast", not "race condition on re-render". Use code names in backticks only when needed to point at the thing.
+- Talk about the code, not the author or the team. The subject is the code or what it does ("This", "the spinner", a backticked name), never "we", "you" or "let's". Give the fix as what the code needs ("hiding it on error too would fix it") or as a question about the code ("Should this also hide on error?").
+- Exception: when the point is product behaviour the code can't settle (who should see something, what should happen in a flow), make it a ❓ that asks for the intended behaviour to be confirmed. Addressing people is fine there.
+- Friendly, as to a colleague. The phrasing carries the tone, not pronouns.
+- Everyday words, no technical or AI jargon: "the list shows twice on a fast double tap", not "race condition on re-render". Use code names in backticks only when needed to point at the thing.
 
 Examples:
 
-- `🔴 If the request fails, the spinner never goes away and the user is stuck. Could we hide it in the error case too?`
-- `💡 This works, but keeping the date logic in one helper would mean fixing it in one place next time. Fine as a follow-up.`
+- `🔴 If the request fails, the spinner never goes away and the user is stuck. It needs hiding in the error case too.`
+- `💡 Keeping the date logic in one helper would mean one place to fix next time. Fine as a follow-up.`
+- `❓ Guests no longer see the price on this screen. Is that the intended behaviour?`
 
 Too long, and mostly the what:
 
@@ -86,7 +91,7 @@ Too long, and mostly the what:
 
 Better:
 
-> 🔴 If someone changes the filter quickly, the list can end up showing results for the old filter. Could we ignore responses that arrive after the filter has changed?
+> 🔴 If the filter changes quickly, the list can end up showing results for the old filter. Responses that arrive after a filter change need ignoring.
 >
 > Why: the effect has no cleanup, so an older request can resolve last and overwrite the newer results. An ignore flag or `AbortController` in the cleanup fixes it.
 
@@ -98,6 +103,7 @@ Better:
 - Plain words over tell-words: delve, robust, seamless, crucial, comprehensive, leverage (say "use"), ensure (say "make sure", or cut it).
 - No technical jargon: regression, edge case, race condition, idempotent, side effect, refactor. Say what happens instead.
 - No sentence that only describes what the code does.
+- No "we", "you", "let's" or "could we", except in a ❓ that confirms product behaviour.
 - Every comment starts with its emoji and has a `Why:` note under it.
 - Don't force groups of three. At most one hedge per sentence, and none on a claim you've verified.
 - Leave quoted text, code and identifiers as they are.
@@ -117,7 +123,7 @@ Keep it to three lines per PR, with no hedging. If a PR is refactor-only with te
 One paste-ready comment per PR, whatever the verdict, at the end of the section 4 report.
 
 - Open with the verdict emoji (✅, ⚠️ or ❌).
-- ✅ OK to merge: "✅ LGTM", then add one or both, briefly: the payoff in plain words if users or developers will notice it (for example "so we can get this new behaviour now, nice!"), or a one-line restatement of what the PR does, to show the change was understood.
+- ✅ OK to merge: "✅ LGTM", then add one or both, briefly: the payoff in plain words if users or developers will notice it (for example "users get the new behaviour now, nice!"), or a one-line restatement of what the PR does, to show the change was understood.
 - ⚠️ Merge after fix or ❌ Not yet: no LGTM. One or two sentences on what has to change before it can merge, pointing to the inline comments. Restate what the PR does if that helps.
 - Keep every comment to one or two short sentences. Plain, natural English, no filler, no AI attribution.
 - Describe the change exactly as the diff shows it. A new property on an existing event isn't a "new event". When the user's wording and the diff disagree, follow the diff and flag the difference outside the comment.
