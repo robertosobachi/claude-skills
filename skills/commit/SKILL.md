@@ -28,7 +28,7 @@ Only the file stats are above. Before grouping or titling, read what you need: `
 3. Groups are whole files. If a file holds changes for two groups, put it with the one it mostly belongs to.
 4. Order the groups so each commit builds on the ones before it. For each group, run `git add -- <paths>`, then `git commit -m '<title>'`, escaping any `'` in the title as `'\''`.
 
-Title format: `:<gitmoji>: <Subject>`
+Title format: if the repo's `CLAUDE.md` sets a commit title format, follow it. Otherwise `:<gitmoji>: <Subject>`:
 
 - `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
 - `<Subject>`: imperative mood, capitalised, no full stop, technically specific.

@@ -28,7 +28,7 @@ Write a commit title for the current work. Describe the first of these that exis
 
 Only the file stats are above. Before grouping or titling, read what you need: `git diff --staged`, or `git diff -- <paths>` for the files in a piece. Read untracked files directly.
 
-Format: `:<gitmoji>: <Subject>`
+Format: if the repo's `CLAUDE.md` sets a commit title format, follow it. Otherwise `:<gitmoji>: <Subject>`:
 
 - `<gitmoji>`: one alias from gitmoji.dev that fits the change, e.g. `:sparkles:`, `:bug:`, `:recycle:`, `:memo:`, `:tada:`.
 - `<Subject>`: imperative mood, capitalised, no full stop, technically specific.
