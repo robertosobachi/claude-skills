@@ -1,6 +1,7 @@
 ---
 name: review-prs
 description: Light, unblocking code review of one or more GitHub PRs (including stacked PRs). Gives a merge verdict per PR, an approval trade-off (cost, what happens if it's wrong, what you get back), paste-ready comments for must-fix issues, questions and a few non-blocking suggestions, each led by an emoji, written in plain words and kept short, with a note for the user on why each was raised, a paste-ready final comment per PR that is always included, and a short summary if asked. Applies each repo's own CLAUDE.md, AGENTS.md and review conventions doc, scoped to the files they govern, and skips points already raised on the PR. Asks once whether to also run adversarial-review on the same PRs, and folds its verified findings into the comments. Never posts anything. Use when the user pastes PR URLs (or a local head ref and base) and says "review these PRs", "review PR <url>", or runs /review-prs.
+argument-hint: "[PR URLs | quick <head> <base>]"
 ---
 
 # Review PRs
@@ -9,15 +10,17 @@ Review the PRs the user pastes so they can move forward. The user posts everythi
 
 ## 1. Get the code
 
-If the user gives a local head ref and base instead of PR URLs (for example `/review-prs quick <head> <base>`), skip the rest of this section. Review it as one PR with that head and base, named by the head ref.
+If the user gives a local head ref and base instead of PR URLs (`/review-prs quick <head> <base>`), skip the rest of this section. Review it as one PR with that head and base, named by the head ref. This mode needs git alone.
 
 Find the default branch with `git symbolic-ref --short refs/remotes/origin/HEAD` (`<default>` below).
 
-`gh` and authenticated git often fail inside a sandbox, so don't spend attempts on them. Try `gh pr view <n>` once; if it fails, ask the user to run this in their own terminal (fill in the default branch and PR numbers) and wait:
+`gh` gives each PR's base, title, body, comments and CI status, never its code. Try `gh pr view <n> --json number,title,body,baseRefName,isDraft` once. The code always comes from a fetch, whether `gh` worked or not. Run it once yourself; if it fails, ask the user to run it in their own terminal (fill in the default branch and PR numbers) and wait:
 
 ```
 git fetch origin <default> pull/<n>/head:refs/review/<n> [pull/<m>/head:refs/review/<m> ...]
 ```
+
+`gh` and authenticated git often fail inside a sandbox, so don't spend more than one attempt on either.
 
 Skip draft PRs unless the user asks for them.
 
@@ -27,30 +30,16 @@ For each PR, find its base: `origin/<default>`, or the PR below it for stacked P
 
 Review each PR only against its own base so a change is never flagged twice.
 
-## 3. Review
+## 3. Adversarial pass (ask first)
 
-- **Repo standards.** Before reading the diff, find the files that set this repo's rules:
-  - `CLAUDE.md` and `AGENTS.md` at the root and in any changed file's directory or its parents. Read them at the PR head, not the working tree: list with `git ls-tree -r --name-only <head>` and read with `git show <head>:<path>`.
-  - the review conventions doc at `docs/plans/review-conventions.md`, if it exists. It's usually git-ignored, so read it from disk.
+Ask once, now, before reviewing, whether to add an adversarial pass. Use the question tool if there is one, otherwise ask one plain question and wait. In the question, list which PRs it would run on and which it would skip for being under ~50 changed lines, and say it costs 5 subagents per PR. Don't ask if the request already answers it: "with adversarial review", "adversarial" or "go deeper" mean yes, and "quick" or "just a light review" mean no.
 
-  Pair each file with the changed files it governs. A nested file covers its own subtree. A root file and the conventions doc cover the whole repo, unless a rule names paths. Judge each changed file only against its paired rules. Never apply a rule from another repo, an earlier review or memory, even when it looks like it should hold here.
-- **Previous comments.** If `gh` worked in section 1, read the comments already on each PR (`gh pr view <n> --comments` and `gh api repos/{owner}/{repo}/pulls/<n>/comments`). Don't raise a point someone already made. If an open thread still applies to the head, it still counts towards the verdict, but mention it in a `Why:` note or the checked bullets, not as a new comment.
-- If the diffs total under ~1000 lines, read them yourself. For bigger ones, use one subagent per PR (sonnet or lower). Subagents return findings with `file:line` and evidence, not comment text. You write every comment and note yourself, following "Writing comments".
-- Blocking issues: bugs, crashes, data loss, security, broken build or tests, callers broken by removed or renamed symbols, or a clear break of a rule in a paired `CLAUDE.md` or `AGENTS.md`. A conventions doc rule is blocking only when the break also fits this list, otherwise it's a suggestion.
-- Non-blocking suggestions: at most 2 per PR, only where a user or the next developer would notice the difference (clearer code, a missing test for a case that matters, a simpler way to do the same thing). Skip pure style and naming preferences.
-- Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behaviour with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker.
-- Check across the stack: a later PR relying on something missing earlier, or an earlier PR that stays broken until a later one lands.
-
-## 3b. Adversarial pass (ask first)
-
-Ask once, right after section 2 and before section 3 starts, whether to add an adversarial pass. Use the question tool if there is one, otherwise ask one plain question and wait. In the question, list which PRs it would run on and which it would skip for being under ~50 changed lines, and say it costs 5 subagents per PR. Don't ask if the request already answers it: "with adversarial review", "adversarial" or "go deeper" mean yes, and "quick" or "just a light review" mean no.
-
-If the answer is yes, run it after your own review in section 3, so your reading isn't shaped by its findings.
+If the answer is yes, run it after your own review in section 4, so your reading isn't shaped by its findings.
 
 - Skip PRs under ~50 changed lines and say so in one line.
 - For each remaining PR, invoke the `adversarial-review` skill with the PR's head ref from section 2 (`refs/review/<n>` when it was fetched) as the target and that PR's own base from section 2 (the PR below it for stacked PRs), so nothing is flagged twice across the stack. Pass the PR title and body as the stated intent when you have them.
-- Treat the judge's verdicts as candidates for section 3, not as comments:
-  - valid blocker: 🔴 if it meets the blocking list in section 3. Re-read the cited line first.
+- Treat the judge's verdicts as candidates for section 4, not as comments:
+  - valid blocker: 🔴 if it meets the blocking list in section 4. Re-read the cited line first.
   - valid should fix: 🔴 only if it meets that list, otherwise a 💡 that counts towards the 2 suggestions per PR.
   - nit: drop.
   - unverifiable: ❓ only if the answer would change the verdict, otherwise drop.
@@ -58,18 +47,38 @@ If the answer is yes, run it after your own review in section 3, so your reading
 - Merge with your own findings. When both found the same issue, keep one comment and say in its `Why:` note that the judge confirmed it, with its evidence.
 - Write every comment yourself under "Writing comments". Don't paste adversarial-review wording through.
 
-## 4. Report (in chat)
+## 4. Review
 
-One line per PR: `#<n> <title> — ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several. Under it, paste-ready comments if there's anything to say, written as in "Writing comments" below. List 🔴 first, then ❓, then 💡. Each comment uses this shape:
+- **Repo standards.** Before reading the diff, find the files that set this repo's rules:
+  - `CLAUDE.md` and `AGENTS.md` at the root and in any changed file's directory or its parents. Read them at the PR head, not the working tree: list with `git ls-tree -r --name-only <head>` and read with `git show <head>:<path>`.
+  - the review conventions doc at `docs/plans/review-conventions.md`, if it exists. It's usually git-ignored, so read it from disk.
 
-```
-`file:line`
-> 🔴 <paste-ready comment>
+  Pair each file with the changed files it governs. A nested file covers its own subtree. A root file and the conventions doc cover the whole repo, unless a rule names paths. Judge each changed file only against its paired rules. Never apply a rule from another repo, an earlier review or memory, even when it looks like it should hold here.
+- **Previous comments and CI.** If `gh` worked in section 1, read the comments already on each PR (`gh pr view <n> --comments` and `gh api repos/{owner}/{repo}/pulls/<n>/comments`) and its checks (`gh pr checks <n>`). Don't raise a point someone already made. If an open thread still applies to the head, it still counts towards the verdict, but mention it in a `Why:` note or the checked bullets, not as a new comment. A failing check counts towards the verdict like a blocker: name it in the final comment's `Why:` note.
+- If the diffs total under ~1000 lines, read them yourself. For bigger ones, use one subagent per PR, on the session's model or lower, and follow any model policy in the user's `CLAUDE.md`. Subagents return findings with `file:line` and evidence, not comment text. You write every comment and note yourself, following "Writing comments".
+- Blocking issues: bugs, crashes, data loss, security, broken build or tests, callers broken by removed or renamed symbols, or a clear break of a rule in a paired `CLAUDE.md` or `AGENTS.md`. A conventions doc rule is blocking only when the break also fits this list, otherwise it's a suggestion.
+- Non-blocking suggestions: at most 2 per PR, only where a user or the next developer would notice the difference (clearer code, a missing test for a case that matters, a simpler way to do the same thing). Skip pure style and naming preferences.
+- Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behaviour with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker.
+- Check across the stack: a later PR relying on something missing earlier, or an earlier PR that stays broken until a later one lands.
 
-Why: <for the user, never pasted>
-```
+## 5. Report (in chat)
 
-The `Why:` note is for the user only. Every comment gets one, the final comment included. In one to three plain sentences, say what you found, how you checked it (callers grepped, implementation read, compared with the other platform) and what happens if it's ignored. When the comment rests on a repo rule, name the file it came from. This is where the technical detail and evidence go, so the comment itself can stay short. Write it so the user could defend the comment if the author pushes back. Suggestions alone never move a PR off ✅. Then a few short bullets on what was checked, and the limits (no CI status or existing comments without `gh`, nothing built locally), and which standards files were read, or that there were none. If section 3b ran, one bullet per PR: adversarial pass ran or was skipped (and why), how many findings were kept and dropped, and which checks ran. Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`. Close the report with the final comment for each PR (section 6). It's always included, not only when asked.
+1. **Verdict.** One line per PR: `#<n> <title>: ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several.
+2. **Comments.** Under it, paste-ready comments if there's anything to say, written as in "Writing comments" below. List 🔴 first, then ❓, then 💡. Each comment uses this shape:
+
+   ```
+   `file:line`
+   > 🔴 <paste-ready comment>
+
+   Why: <for the user, never pasted>
+   ```
+
+3. **`Why:` notes.** For the user only. Every comment gets one, the final comment included. In one to three plain sentences, say what you found, how you checked it (callers grepped, implementation read, compared with the other platform) and what happens if it's ignored. When the comment rests on a repo rule, name the file it came from. This is where the technical detail and evidence go, so the comment itself can stay short. Write it so the user could defend the comment if the author pushes back.
+4. Suggestions alone never move a PR off ✅.
+5. **Checked.** A few short bullets on what was checked, the limits (no CI status or existing comments without `gh`, nothing built locally), and which standards files were read, or that there were none.
+6. **Adversarial pass.** If section 3 ran, one bullet per PR: the pass ran or was skipped (and why), how many findings were kept and dropped, and which checks ran.
+7. **Cleanup.** Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`.
+8. **Final comment.** Close the report with the final comment for each PR (section 7). It's always included, not only when asked.
 
 ### Writing comments
 
@@ -107,16 +116,17 @@ Better:
 
 - No em dashes outside code, commands and paths. Use a comma, full stop, colon or brackets.
 - No "it's not X, it's Y" or "less X, more Y" contrasts. Say the point directly.
-- No opener other than LGTM ("Good catch", "Great question") and no closing recap.
+- No opener ("Good catch", "Great question") and no closing recap.
 - Plain words over tell-words: delve, robust, seamless, crucial, comprehensive, leverage (say "use"), ensure (say "make sure", or cut it).
+- Don't force groups of three. At most one hedge per sentence, and none on a claim you've verified.
+- Leave quoted text, code and identifiers as they are.
+- The one opener allowed is LGTM, at the start of a ✅ final comment.
 - No technical jargon: regression, edge case, race condition, idempotent, side effect, refactor. Say what happens instead.
 - No sentence that only describes what the code does.
 - No "we", "you", "let's" or "could we", except in a ❓ that confirms product behaviour.
 - Every comment starts with its emoji and has a `Why:` note under it.
-- Don't force groups of three. At most one hedge per sentence, and none on a claim you've verified.
-- Leave quoted text, code and identifiers as they are.
 
-## 5. Approval trade-off (per PR, in the report)
+## 6. Approval trade-off (per PR, in the report)
 
 For each PR, answer three questions in one short line each, based on the actual diff. Use a table when there are several PRs (columns: PR, Cost, If it's wrong, What I get back).
 
@@ -126,9 +136,9 @@ For each PR, answer three questions in one short line each, based on the actual 
 
 Keep it to three lines per PR, with no hedging. If a PR is refactor-only with tests, say that the risk is low and why.
 
-## 6. Final comment (always)
+## 7. Final comment (always)
 
-One paste-ready comment per PR, whatever the verdict, at the end of the section 4 report.
+One paste-ready comment per PR, whatever the verdict, at the end of the section 5 report.
 
 - Open with the verdict emoji (✅, ⚠️ or ❌).
 - ✅ OK to merge: "✅ LGTM", then add one or both, briefly: the payoff in plain words if users or developers will notice it (for example "users get the new behaviour now, nice!"), or a one-line restatement of what the PR does, to show the change was understood.
@@ -140,7 +150,7 @@ One paste-ready comment per PR, whatever the verdict, at the end of the section 
 - Its `Why:` note says in a line why you gave that verdict.
 - Run the style pass from "Writing comments" on it.
 
-## 7. Summary (when asked)
+## 8. Summary (when asked)
 
 One line on what the set of PRs does overall, then one bullet per PR: what changed and where (module, platform or service), and whether it's a refactor, a behaviour change, or tests. Short enough to answer "what was in those PRs?" in a meeting.
 
