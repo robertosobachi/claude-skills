@@ -18,13 +18,15 @@ This block applies to you and to every subagent. Paste it into each subagent pro
 - Allowed commands: read-only git, search, the test suite, the type checker and the linter. Nothing else that changes state.
 ```
 
+The one exception is the temporary worktree in step 2, which only you create and remove, never a subagent.
+
 ## 1. Resolve the target
 
 Use one simple command per Bash call. No `cd`, loops or `$(...)`.
 
 - **Base:** the argument if given, else the PR's base, else the default branch from `git symbolic-ref --short refs/remotes/origin/HEAD`. Don't assume `main`.
 - **No target (default):** the current branch, uncommitted work included. Run `git merge-base <base> HEAD`, then review `git diff <merge-base>`, which covers the branch's commits and uncommitted changes to tracked files. Add untracked files from `git status --short`. If there's nothing to review, say so and ask which PR, branch or path to review instead.
-- **PR number:** try `gh pr view <n> --json baseRefName,headRefName,title,body` once. `gh` often fails inside a sandbox, so if it does, ask the user to run this in their own terminal and wait:
+- **PR number:** try `gh pr view <n> --json baseRefName,headRefName,title,body` once for the base and the stated intent. The code always comes from a fetch, whether `gh` worked or not. Run it once yourself; `gh` and authenticated git often fail inside a sandbox, so if it fails, ask the user to run it in their own terminal and wait:
   ```
   git fetch origin <base> pull/<n>/head:refs/review/<n>
   ```
@@ -37,13 +39,18 @@ Collect:
 - The touched files: the same diff with `--name-only`, plus any untracked files.
 - The stated intent: the PR title and body, or the ticket text if the user gave one. If there's neither, say so to reviewer 3 instead of inventing one.
 
-If the diff is under ~50 lines, say once that a single pass would do and ask whether to run the full panel anyway.
+If the diff is under ~50 lines, say once that a single pass would do (one reviewer with all four angles, then the judge) and ask whether to run the full panel anyway.
 
 ## 2. Run the checks once
 
 Find the repo's test, type check and lint commands in `package.json` scripts, the Makefile, CI config or `CLAUDE.md`. Run each once on the head and keep the raw output. If one can't run, record the command and why.
 
-If the target's head isn't the checked-out `HEAD` (a `refs/review/<n>` ref or another branch), don't run them: they would test the working tree, not the change. Record "not run: head not checked out" as the check output instead.
+If the target's head isn't the checked-out `HEAD` (a `refs/review/<n>` ref or another branch), running them here would test the working tree, not the change. Ask once whether to check the head out in a temporary worktree instead.
+
+- On yes, create it with `git worktree add --detach "$TMPDIR/adversarial-review-<n>" <head>` (a short name in place of `<n>` for a branch). Run each check from there with the tool's directory option where it has one (`npm --prefix <dir>`, `pnpm -C <dir>`, `make -C <dir>`); otherwise `cd <dir> && <command>` in one call is the one exception to the no-`cd` rule.
+- A fresh worktree has no installed dependencies (`node_modules`, `vendor`, a local database). If a check needs them, record "not run: needs install in worktree" for it. Never install anything.
+- Remove the worktree with `git worktree remove --force <dir>` as soon as the checks finish, and on every other way out too: a check fails or hangs, the user stops, or the review ends early.
+- On no, record "not run: head not checked out" as the check output.
 
 Run them here, not in the reviewers: four parallel runs collide on build caches, ports and test databases, and cost four times as much.
 
@@ -61,6 +68,8 @@ Give each one only:
 
 Don't pass on your own reading of the change. No summary, no hints about where you think the problems are.
 
+For a single pass, spawn one reviewer with all four angles instead.
+
 Angles:
 
 1. **Correctness:** logic, edge cases, async and state bugs, error handling.
@@ -71,7 +80,7 @@ Angles:
 Instruction for each:
 
 ```
-Your job is to prove this change is wrong from the angle below. Do what a strong engineer would: read the call sites, grep for other usages, check the types, run a single targeted test file if it helps. The full suite has already run; its output is below.
+Your job is to prove this change is wrong from the angle below. Do what a strong engineer would: read the call sites, grep for other usages, check the types, run a single targeted test file if it helps. The repo's checks ran once before you started and their output is below. Where it says "not run", nothing was checked, so don't assume the suite passes.
 
 For each finding give:
 - claim: one sentence
@@ -114,6 +123,7 @@ When another skill (such as `review-prs`) invokes this one:
 
 - Use the target and base it gives. Don't fetch again.
 - Skip the under-~50-lines question. The caller has decided.
+- Ask the worktree question in step 2 once for all the caller's targets, not once per target.
 - Skip section 5. Hand the judge's verdicts back to the caller (valid, invalid or unverifiable, each with `file:line`, claim, evidence and severity) plus the one line on checks. The caller writes the report.
 
 ## Rules
