@@ -12,13 +12,13 @@ Draft the comments the author should add to their own PR so reviewers get the wh
 
 Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
 
-`gh` often fails inside a sandbox or without auth. Try it once. If it fails, carry on with git alone.
+`gh` often fails inside a sandbox or without auth. Try it once. If `gh auth status` fails, or a call returns 404 for a repo you know exists, treat `gh` as unavailable. If it fails, carry on with git alone.
 
 1. The branch: `git branch --show-current`. If the argument is a PR number or URL and the branch doesn't match, ask the user to check it out or run `git fetch origin pull/<n>/head:refs/review/<n>` and work from that ref.
 2. The base:
    - If the user passed a base branch, use it.
    - Otherwise, if a PR exists, `gh pr view --json baseRefName,number,body` gives the base and the description.
-   - Otherwise, use the repo's default branch from `git symbolic-ref refs/remotes/origin/HEAD`. Don't assume `main`. If `git log --oneline <default>..HEAD` holds commits that aren't this branch's work, the branch is stacked: ask which branch it stacks on.
+   - Otherwise, use the repo's default branch from `git symbolic-ref --short refs/remotes/origin/HEAD`. Don't assume `main`. If `git log --oneline <default>..HEAD` holds commits that aren't this branch's work, the branch is stacked: ask which branch it stacks on.
 3. What changed: `git log <base>..HEAD` with full commit bodies, `git diff --stat <base>...HEAD`, then `git diff <base>...HEAD`.
 4. Where the why lives: the commit bodies, the conversation, the repo's plan docs (e.g. `docs/plans/`), the PR description and the code around each hunk.
 

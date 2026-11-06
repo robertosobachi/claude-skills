@@ -15,6 +15,7 @@ Build one PR from a plan written by `kickoff`, or any plan with a PR list. If th
 - Settled decisions in the plan are settled. Don't reopen them. If the code contradicts one, stop and say so.
 - If the sandbox blocks a command (a local service, the database, `gh`), say so and give the exact command for the user to run and paste back.
 - No AI attribution. Never hard-wrap prose.
+- Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
 - Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
 
 ## Read first, in this order

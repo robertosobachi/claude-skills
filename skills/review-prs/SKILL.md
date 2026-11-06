@@ -14,7 +14,7 @@ If the user gives a local head ref and base instead of PR URLs (`/review-prs qui
 
 Find the default branch with `git symbolic-ref --short refs/remotes/origin/HEAD` (`<default>` below).
 
-`gh` gives each PR's base, title, body, comments and CI status, never its code. Try `gh pr view <n> --json number,title,body,baseRefName,isDraft` once. The code always comes from a fetch, whether `gh` worked or not. Run it once yourself; if it fails, ask the user to run it in their own terminal (fill in the default branch and PR numbers) and wait:
+`gh` gives each PR's base, title, body, comments and CI status, never its code. Try `gh pr view <n> --json number,title,body,baseRefName,isDraft` once. If `gh auth status` fails, or a call returns 404 for a repo you know exists, treat `gh` as unavailable. The code always comes from a fetch, whether `gh` worked or not. Run it once yourself; if it fails, ask the user to run it in their own terminal (fill in the default branch and PR numbers) and wait:
 
 ```
 git fetch origin <default> pull/<n>/head:refs/review/<n> [pull/<m>/head:refs/review/<m> ...]
@@ -156,4 +156,5 @@ One line on what the set of PRs does overall, then one bullet per PR: what chang
 
 ## Rules
 
+- Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
 - Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.

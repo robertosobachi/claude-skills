@@ -69,8 +69,8 @@ gh search prs --author {GITHUB_LOGIN} --owner {GITHUB_ORG} --merged-at START..EN
 2. PRs by others that I reviewed:
 gh search prs --reviewed-by {GITHUB_LOGIN} --owner {GITHUB_ORG} --updated START..END --limit 100 --json number,title,url,author,repository
 Skip PRs authored by {GITHUB_LOGIN}. For each, read only my review text:
-gh api repos/OWNER/REPO/pulls/N/reviews --jq '.[] | select(.user.login=="{GITHUB_LOGIN}") | [.submitted_at, .state, .body] | @tsv'
-gh api repos/OWNER/REPO/pulls/N/comments --paginate --jq '.[] | select(.user.login=="{GITHUB_LOGIN}") | [.created_at, .body] | @tsv'
+gh api repos/OWNER/REPO/pulls/N/reviews --jq '.[] | select(.user.login=="{GITHUB_LOGIN}") | "\(.submitted_at)\t\(.state)\t\(.body)"'
+gh api repos/OWNER/REPO/pulls/N/comments --paginate --jq '.[] | select(.user.login=="{GITHUB_LOGIN}") | "\(.created_at)\t\(.body)"'
 Keep a review only if it was submitted in the period and is substantive: I found a bug, changed the design, raised a risk or a real test gap. Plain approvals, nits and style comments don't count.
 3. Skip dependency or version bumps, typo fixes and routine chores.
 Reply with only this block, one line per PR, no other commentary:

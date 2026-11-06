@@ -14,6 +14,7 @@ One document per repo that collects what reviewers ask for and why, so the same 
 - Each rule is stated generally, with its reason. Where the repo already has a mechanism for it, an "In <repo>:" note names the file or helper.
 - Don't delete source notes the doc replaces until the user has read the merged doc and says so.
 - Never stage, commit, push or post. No AI attribution. Never hard-wrap prose.
+- Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
 - Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
 
 ## Mode

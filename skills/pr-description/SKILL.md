@@ -12,13 +12,13 @@ Draft the title and description for the current branch's PR and hand them over a
 
 Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
 
-`gh` often fails inside a sandbox or without auth. Try it once. If it fails, carry on with git alone and, at the end, give the user the `gh` commands you skipped to run and paste back if the answer depends on them.
+`gh` often fails inside a sandbox or without auth. Try it once. If `gh auth status` fails, or a call returns 404 for a repo you know exists, treat `gh` as unavailable. If it fails, carry on with git alone and, at the end, give the user the `gh` commands you skipped to run and paste back if the answer depends on them.
 
 1. The branch: `git branch --show-current`.
 2. The base:
    - If the user passed a base branch, use it.
    - Otherwise, if a PR exists for the branch, `gh pr view --json baseRefName,number,title` gives the base.
-   - Otherwise, use the repo's default branch from `git symbolic-ref refs/remotes/origin/HEAD`. Don't assume `main`. If `git log --oneline <default>..HEAD` holds commits that aren't this branch's work, the branch is stacked: ask which branch it stacks on.
+   - Otherwise, use the repo's default branch from `git symbolic-ref --short refs/remotes/origin/HEAD`. Don't assume `main`. If `git log --oneline <default>..HEAD` holds commits that aren't this branch's work, the branch is stacked: ask which branch it stacks on.
 3. What changed: `git log --oneline <base>..HEAD`, `git diff --stat <base>...HEAD`, then `git diff <base>...HEAD`. Read the commits too: they often say why.
 4. The house format, first match wins:
    1. The repo's PR template: `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE/`, `docs/pull_request_template.md` or `pull_request_template.md` at the root.

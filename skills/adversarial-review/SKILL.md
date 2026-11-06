@@ -22,11 +22,11 @@ The one exception is the temporary worktree in step 2, which only you create and
 
 ## 1. Resolve the target
 
-Use one simple command per Bash call. No `cd`, loops or `$(...)`.
+Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
 
 - **Base:** the argument if given, else the PR's base, else the default branch from `git symbolic-ref --short refs/remotes/origin/HEAD`. Don't assume `main`.
 - **No target (default):** the current branch, uncommitted work included. Run `git merge-base <base> HEAD`, then review `git diff <merge-base>`, which covers the branch's commits and uncommitted changes to tracked files. Add untracked files from `git status --short`. If there's nothing to review, say so and ask which PR, branch or path to review instead.
-- **PR number:** try `gh pr view <n> --json baseRefName,headRefName,title,body` once for the base and the stated intent. The code always comes from a fetch, whether `gh` worked or not. Run it once yourself; `gh` and authenticated git often fail inside a sandbox, so if it fails, ask the user to run it in their own terminal and wait:
+- **PR number:** try `gh pr view <n> --json baseRefName,headRefName,title,body` once for the base and the stated intent. If `gh auth status` fails, or a call returns 404 for a repo you know exists, treat `gh` as unavailable. The code always comes from a fetch, whether `gh` worked or not. Run it once yourself; `gh` and authenticated git often fail inside a sandbox, so if it fails, ask the user to run it in their own terminal and wait:
   ```
   git fetch origin <base> pull/<n>/head:refs/review/<n>
   ```
