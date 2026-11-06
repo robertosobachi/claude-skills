@@ -24,7 +24,7 @@ The user uses AI coding tools and wants to move from using them to building and 
 
 ## Log
 
-Append an entry to `~/notes/ai-practice-log.md` with a single shell append (`mkdir -p ~/notes && cat >> ~/notes/ai-practice-log.md <<'EOF'`). Don't read the file first. Never write the log inside a repository.
+Append an entry to `~/notes/ai-practice-log.md` with a single shell append (`mkdir -p ~/notes && cat >> ~/notes/ai-practice-log.md <<'EOF'`). Don't read the file first. Never write the log inside a repository. If the append fails (a sandbox may only allow writes to listed folders), print the entry in a code block for the user to paste into the log.
 
 ```
 ## YYYY-MM-DD: <task in a few words>
