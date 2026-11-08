@@ -27,5 +27,6 @@ Each is answered on its own, against the case's `expected.md` and the diff.
 - **J4 final comment:** each final comment describes the change as the diff shows it.
 - **J5 repo rules:** every item under "Repo rules" is raised, and no comment rests on a rule that isn't listed there or in "Must fix".
 - **J6 verdict:** the verdict line matches "Verdict".
+- **J7 test findings:** every comment on a test file cites a test rule number in its `Why:` note, and none is 🔴 unless it's a real blocker. PASS if there are no comments on test files.
 
 Two judge runs that disagree count as UNSURE, not PASS or FAIL.

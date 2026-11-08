@@ -54,10 +54,17 @@ If the answer is yes, run it after your own review in section 4, so your reading
   - the review conventions doc at `docs/plans/review-conventions.md`, if it exists. It's usually git-ignored, so read it from disk.
 
   Pair each file with the changed files it governs. A nested file covers its own subtree. A root file and the conventions doc cover the whole repo, unless a rule names paths. Judge each changed file only against its paired rules. Never apply a rule from another repo, an earlier review or memory, even when it looks like it should hold here.
+- **Test rules.** If the PR changes test files, read `../review-tests/references/test-rules.md` relative to this skill's base directory. If it isn't there, skip this bullet and say so under "Checked". Apply only these rules, to changed or added examples, by reading the code, never by running it:
+  - 2.6: can the assertion go red? Trace setup to the asserted line for an early return, flag, env value or skipped call that makes it pass for nothing.
+  - 1.1 and 2.3: the name claims more than the body asserts.
+  - 1.3: a bare count (`.twice`, `toHaveBeenCalledTimes(2)`) where the behaviour has a hidden variant the assertions don't settle.
+  - 2.1 and 2.2: a deleted test whose guarded behaviour is still in the code.
+
+  Leave the other rules to the author. A test finding is a 💡 that counts towards the 2 per PR. It's a ❓ when the PR's main claim rests on a test that can't go red, and 🔴 only when it fits the blocking list below. Cite the rule number in the `Why:` note. The repo's own rules win where they disagree.
 - **Previous comments and CI.** If `gh` worked in section 1, read the comments already on each PR (`gh pr view <n> --comments` and `gh api repos/{owner}/{repo}/pulls/<n>/comments`) and its checks (`gh pr checks <n>`). Don't raise a point someone already made. If an open thread still applies to the head, it still counts towards the verdict, but mention it in a `Why:` note or the checked bullets, not as a new comment. A failing check counts towards the verdict like a blocker: name it in the final comment's `Why:` note.
 - If the diffs total under ~1000 lines, read them yourself. For bigger ones, use one subagent per PR, on the session's model or lower, and follow any model policy in the user's `CLAUDE.md`. Subagents return findings with `file:line` and evidence, not comment text. You write every comment and note yourself, following "Writing comments".
 - Blocking issues: bugs, crashes, data loss, security, broken build or tests, callers broken by removed or renamed symbols, or a clear break of a rule in a paired `CLAUDE.md` or `AGENTS.md`. A conventions doc rule is blocking only when the break also fits this list, otherwise it's a suggestion.
-- Non-blocking suggestions: at most 2 per PR, only where a user or the next developer would notice the difference (clearer code, a missing test for a case that matters, a simpler way to do the same thing). Skip pure style and naming preferences.
+- Non-blocking suggestions: at most 2 per PR, only where a user or the next developer would notice the difference (clearer code, a missing test for a case that matters, a simpler way to do the same thing). Skip pure style and naming preferences. A test name that claims more than its body checks isn't a preference.
 - Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behaviour with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker.
 - Check across the stack: a later PR relying on something missing earlier, or an earlier PR that stays broken until a later one lands.
 
@@ -75,7 +82,7 @@ If the answer is yes, run it after your own review in section 4, so your reading
 
 3. **`Why:` notes.** For the user only. Every comment gets one, the final comment included. In one to three plain sentences, say what you found, how you checked it (callers grepped, implementation read, compared with the other platform) and what happens if it's ignored. When the comment rests on a repo rule, name the file it came from. This is where the technical detail and evidence go, so the comment itself can stay short. Write it so the user could defend the comment if the author pushes back.
 4. Suggestions alone never move a PR off ✅.
-5. **Checked.** A few short bullets on what was checked, the limits (no CI status or existing comments without `gh`, nothing built locally), and which standards files were read, or that there were none.
+5. **Checked.** A few short bullets on what was checked, the limits (no CI status or existing comments without `gh`, nothing built locally), and which standards files were read, or that there were none. Say whether the test rules were applied, or why not (no test files changed, `review-tests` not installed).
 6. **Adversarial pass.** If section 3 ran, one bullet per PR: the pass ran or was skipped (and why), how many findings were kept and dropped, and which checks ran.
 7. **Cleanup.** Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`.
 8. **Final comment.** Close the report with the final comment for each PR (section 7). It's always included, not only when asked.
