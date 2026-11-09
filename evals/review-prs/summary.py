@@ -6,14 +6,17 @@ Usage: summary.py <case dir> [<case dir> ...]
 Groups runs by (skill, Claude Code version, model): only runs in the same
 group are comparable. If a run has a <run>.me.md with your own J1-J7
 verdicts, it also reports how often the judge agreed with you per item.
+Runs with a <run>.trace.jsonl also get median tool calls, errors and retries.
 """
 import os
 import re
 import sys
 from collections import defaultdict
+from statistics import median
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from check import check  # noqa: E402
+from tooltrace import stats  # noqa: E402
 
 JUDGE_LINE = re.compile(r"^(J\d+)\S*\s*:\s*(PASS|FAIL)", re.MULTILINE)
 
@@ -44,7 +47,8 @@ def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__.strip())
     groups = defaultdict(lambda: {"runs": 0, "script": 0, "script_total": 0,
-                                  "judge": defaultdict(lambda: defaultdict(int))})
+                                  "judge": defaultdict(lambda: defaultdict(int)),
+                                  "tools": []})
     agreement = defaultdict(lambda: [0, 0])
     for case in sys.argv[1:]:
         runs_dir = os.path.join(case, "runs")
@@ -63,6 +67,8 @@ def main():
             g["runs"] += 1
             g["script"] += sum(ok for _, ok, _ in results)
             g["script_total"] += len(results)
+            if os.path.exists(run + ".trace.jsonl"):
+                g["tools"].append(stats(run + ".trace.jsonl"))
             j = judge(run)
             for item, v in j.items():
                 g["judge"][item][v] += 1
@@ -75,6 +81,10 @@ def main():
     for (skill, claude, model), g in sorted(groups.items()):
         print(f"skill {skill} | claude {claude} | model {model} | {g['runs']} run(s)")
         print(f"  script: {g['script']}/{g['script_total']}")
+        if g["tools"]:
+            med = {k: median(t[k] for t in g["tools"]) for k in ("tools", "errors", "retries")}
+            print(f"  tool calls (median of {len(g['tools'])}): {med['tools']:g} calls, "
+                  f"{med['errors']:g} errors, {med['retries']:g} retries")
         for item in sorted(g["judge"], key=lambda k: int(k[1:])):
             c = g["judge"][item]
             print(f"  {item}: {c['PASS']} pass, {c['FAIL']} fail, {c['UNSURE']} unsure")

@@ -128,9 +128,13 @@ for name in "${cases[@]}"; do
       echo "-->"
     } > "$out"
     echo "run    $name $i/$runs"
-    (cd "$wt" && claude -p "/review-prs quick $head $base" "${run_flags[@]}") >> "$out" \
-      || echo "warn   $name $i: claude exited non-zero, see $out"
+    trace="${out%.md}.trace.jsonl"
+    (cd "$wt" && claude -p "/review-prs quick $head $base" --output-format stream-json --verbose \
+      "${run_flags[@]}") > "$trace" \
+      || echo "warn   $name $i: claude exited non-zero, see $trace"
+    python3 "$here/tooltrace.py" --result "$trace" >> "$out"
     python3 "$here/check.py" "$out" | tail -1 || true
+    python3 "$here/tooltrace.py" "$trace" || true
     if [[ $judge -eq 1 ]]; then
       judge_run "$case_dir" "$out" "$base" "$head" 1
       judge_run "$case_dir" "$out" "$base" "$head" 2

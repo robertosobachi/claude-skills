@@ -6,7 +6,7 @@ This folder sits outside `skills/` so `install.sh` and `package.sh` don't ship i
 
 ## What's public and what's private
 
-- **Here (public):** the method. [checklist.md](checklist.md), `check.py`, `summary.py`, `new-case.sh`, `run.sh`.
+- **Here (public):** the method. [checklist.md](checklist.md), `check.py`, `tooltrace.py`, `summary.py`, `new-case.sh`, `run.sh`.
 - **Your private evals repo:** the cases, because they describe private PRs. Clone it on each machine and point `SKILL_EVALS_DIR` at it. Nothing here names it.
 
 ```
@@ -18,6 +18,7 @@ $SKILL_EVALS_DIR/
     guidelines/                # git-ignored standards files, at their repo paths
     case.patch                 # optional: synthetic change applied on top of head
     runs/<batch>-<skill>-<n>.md          # saved report, with a header
+    runs/<batch>-<skill>-<n>.trace.jsonl # stream-json trace: every tool call and result
     runs/<batch>-<skill>-<n>.judge1.md   # judge verdicts, two passes
     runs/<batch>-<skill>-<n>.me.md       # optional: your own J1-J6 verdicts
 ```
@@ -60,6 +61,8 @@ evals/review-prs/run.sh --no-judge       # script checks only
 ```
 
 For each case it makes a detached worktree at the head, restores `guidelines/`, applies `case.patch`, runs the skill, scores it with `check.py`, runs the judge twice and removes the worktree. It ends with `summary.py`.
+
+Each run also saves its stream-json trace. `tooltrace.py <run>.trace.jsonl` prints the tool calls, the failed ones and the retries (a failed call followed by another call to the same tool), and `summary.py` prints their medians per group. The report only shows what the skill concluded. The trace shows what it tripped over on the way: a blocked `gh`, a wrong path, an instruction that no longer matches the repo. Errors going up between two skill versions with the same pass count means the skill now works around something, so read the failed calls.
 
 Each run's header records the machine, skill commit (`-dirty` for uncommitted SKILL.md edits), Claude Code version, model and a hash of `~/.claude/CLAUDE.md`. `summary.py` only groups runs that share skill, Claude Code version and model. If the CLAUDE.md hash changed between two groups, check that before blaming the skill.
 
