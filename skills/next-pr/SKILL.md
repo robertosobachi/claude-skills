@@ -31,6 +31,8 @@ If the user didn't say which PR, take the next one in the current state whose pr
 
 Check where you are with `git branch --show-current` and `git log --oneline -3`. If the branch for this PR doesn't exist, or its parent isn't what the plan says, give the user the command (e.g. `git switch -c <branch> <base>`) and wait. For a stacked PR, confirm the parent PR's head commit is the parent.
 
+If section 0 shows another PR from this plan in progress, build this one in its own worktree: give the user `git worktree add <dir> -b <branch> <base>` and wait. Only start a PR the plan lists as parallel with every PR in progress. If it isn't, stop and say which PR it's waiting on.
+
 ## Step 1: check the plan against the code
 
 - Re-check every claim and `file:line` citation in this PR's section. The code moves between sessions, and earlier PRs may have changed what this one needs.
@@ -43,12 +45,12 @@ Files, tests, and the order you'd build them, plus anything that touches shared 
 
 ## After approval
 
-Before touching code, run the relevant tests once with the commands from `CLAUDE.md` and keep the result as the baseline. A test that already fails there is failing for a reason outside this PR.
+Before touching code, run the relevant tests once with the commands from `CLAUDE.md` and keep the result as the baseline. A test that already fails there is failing for a reason outside this PR. Mark this PR in progress in section 0, with its worktree if it has one, so a parallel session can see it.
 
 1. **Build** up to the user's piece, if any, and stop there for their choice. Then finish.
 2. **Run** the relevant tests and the linter on changed files, using the commands from `CLAUDE.md`. Report what ran and what couldn't. If the repo has no tests or linter, say so.
 3. **Mutation-test every new assertion:** break the code it guards, confirm the test goes red, revert. A green run only counts if it could have gone red. If tests can't run here, give the user the list of mutations to try.
-4. **Check the UI**, if the diff changes what a user sees. With a browser tool (Playwright, or a browser or Chrome DevTools MCP), drive the changed flow in the running app, compare it with what the plan says it should do, and attach a screenshot or short trace reference to the handover. If the app can't run here or there's no browser tool, say so and give the user the steps to check by hand.
+4. **Check the UI**, if the diff changes what a user sees. With a browser tool (Playwright, or a browser or Chrome DevTools MCP), drive the changed flow in the running app, compare it with what the plan says it should do, and record it: a video or trace file (Playwright `video` or `trace`) where the tool can, a screenshot otherwise. Put the path in the handover and tell the user to watch it before staging. If the app can't run here or there's no browser tool, say so and give the user the steps to check by hand.
 5. **Run the review conventions checklist**, if the repo has one, on this PR's diff (against its parent for a stacked PR), item by item. Fix what fails.
 6. **Review it in a fresh context.** Spawn one subagent. Use the session's model or lower, and follow any model policy in the user's `CLAUDE.md`. Give it only the diff (against the parent for a stacked PR), this PR's section of the plan and the review conventions, if any. It hunts for gaps between pieces that each look right alone (ordering, which source wins, unhandled nil, a caller outside the diff) and anything a reviewer would ask to cut, and returns findings with `file:line`. Check each finding against the code, fix the valid ones and drop the rest. If subagents aren't available, re-read the diff yourself for the same gaps and say so in the handover.
 7. **Hand over**, in this order:

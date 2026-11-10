@@ -54,8 +54,9 @@ Each PR must be reviewable on its own:
 - An independent branch off the main branch by default. Stack only when a PR truly needs another's code, and say why.
 - A name that might still change gets one constant, plus, if the repo has feature flags, a flag that stays off in production until the name is final.
 - Order PRs by deploy safety (for example a column before the code that reads it), and state each PR's deploy prerequisites.
+- Mark which PRs can be built at the same time. Two PRs collide when both touch a sequence-numbered file (migrations, schema versions), a shared registry (routes, translation files, feature-flag lists, module or DI registration), a lockfile or a generated file. PRs that collide can't be built in parallel; say which goes first.
 
-For each PR give: branch name, base, scope, files, tests, deploy order, the departures from the reference feature a reviewer will ask about, and **the user's piece**: one key decision or piece of code the user writes or chooses themselves. When the build reaches it, stop and lay out options instead of writing it.
+For each PR give: branch name, base, scope, files, tests, deploy order, **parallel with** (the PRs it can be built alongside, or "none"), the departures from the reference feature a reviewer will ask about, and **the user's piece**: one key decision or piece of code the user writes or chooses themselves. When the build reaches it, stop and lay out options instead of writing it.
 
 ### 6. Record the practice baseline
 
@@ -82,7 +83,7 @@ summary: <one line>
 Review conventions for every PR in this plan: <path>.
 
 ## 0. Current state (<date>)
-<table: PR | branch | what | state>, then blockers, flags and gates, drafts, and where the session log is. Every session updates this section before ending.
+<table: PR | branch | what | parallel with | state>, then blockers, flags and gates, drafts, and where the session log is. Every session updates this section before ending.
 
 ## 1. Requirements summary
 <source links, short summary, table of what changes>
@@ -96,7 +97,7 @@ Review conventions for every PR in this plan: <path>.
 
 ## 4. PR list
 ### PR 1: <title>
-<branch, base, scope, files, tests, deploy order, departures, the user's piece>
+<branch, base, scope, files, tests, deploy order, parallel with, departures, the user's piece>
 
 ## 5. Practice baseline
 <table: PR | review comments | rounds>, pending rows marked as such
