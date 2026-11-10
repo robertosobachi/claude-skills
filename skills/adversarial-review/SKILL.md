@@ -56,7 +56,7 @@ Run them here, not in the reviewers: four parallel runs collide on build caches,
 
 ## 3. Reviewers
 
-Spawn 4 general-purpose subagents in one message, each with fresh context. Use the session's model or lower, and follow any model policy in the user's `CLAUDE.md`.
+Spawn 4 general-purpose subagents in one message, each with fresh context. Use the session's model or lower, and follow any model policy in the user's `CLAUDE.md`. Reviewers make judgment calls: don't move them to the smallest model tier to save cost.
 
 Give each one only:
 
@@ -93,7 +93,7 @@ No finding without evidence. "No findings" is a valid answer; don't pad.
 
 ## 4. Judge
 
-Spawn one more general-purpose subagent with fresh context. Give it the scope block, the diff and every finding verbatim, with the reviewer labels removed so the angle doesn't bias the verdict.
+Spawn one more general-purpose subagent with fresh context, on a model no lighter than the reviewers'. Give it the scope block, the diff and every finding verbatim, with the reviewer labels removed so the angle doesn't bias the verdict.
 
 Instruction:
 
