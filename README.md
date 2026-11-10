@@ -29,6 +29,7 @@ This is my working toolkit. I use it and improve it on personal projects, when p
 | [`review-evidence-log`](skills/review-evidence-log/SKILL.md) | Keeps a performance-review evidence log up to date, weekly and unattended: your work, plus facts about teammates' work you saw, from Slack, GitHub, Confluence and Zoom stand-up summaries, every line with a link and readable without opening it. Without a GitHub token it hands you a read-only `gh` prompt to run and paste back. Read only on every source. | You want evidence for your review collected as you go, not reconstructed at the end | Writes one local log file and creates a scheduled task at setup, never posts | `/review-evidence-log`, or "update my review log" |
 | [`should-this-exist`](skills/should-this-exist/SKILL.md) | Challenges a task, list, report or automation before you do it: checks who owns it, runs a few lenses and gives one verdict (drop, delegate, defer, shrink or do) with the smallest version worth doing. Waits for your go before doing anything. | You're about to take on work and aren't sure it's worth it | No | `/should-this-exist [task]` |
 | [`slack-morning-brief`](skills/slack-morning-brief/SKILL.md) | Sets up or runs a weekday brief of decisions, changes and incidents across the Slack workspace, channels you're not in included. Read only in Slack. | You want to know what changed overnight before you start work | Creates a scheduled task at setup, never posts in Slack | `/slack-morning-brief` |
+| [`which-model`](skills/which-model/SKILL.md) | Suggests the model and effort level for a task, from a dated table of the current Claude lineup, or the next step when a result falls short: check your own work, raise effort one level, then move up a model. Prints the `/model` and `/effort` commands to type, and says when to `/compact` first. | You're starting a task or a result keeps falling short | No | `/which-model [task, or what went wrong]` |
 | [`which-skill`](skills/which-skill/SKILL.md) | Reads the conversation and git state and suggests the skill to start with, from every skill installed, not just this repo. | You're about to start and aren't sure which skill fits | No | `/which-skill [task]` |
 
 ## Why some steps stay manual
@@ -51,9 +52,21 @@ cd claude-skills && ./install.sh
 
 Each skill is symlinked into `~/.claude/skills`, or `$CLAUDE_SKILLS_DIR` if set. An existing folder with the same name that isn't a symlink is skipped. Invoke a skill by name, e.g. `/commit-title`.
 
+### Subagents (opt-in)
+
+```
+./install.sh --with-agents
+```
+
+Also symlinks each file in [`agents/`](agents/) into `~/.claude/agents`, or `$CLAUDE_AGENTS_DIR` if set. Today that's one file, [`Explore.md`](agents/Explore.md). It overrides the built-in Explore subagent so it runs on `haiku` and not on the session's model, which keeps file searches cheap. The choice is saved in this clone's git config, so later installs and pulls keep it. `./install.sh --without-agents` removes the links.
+
+The `haiku` alias means Haiku 5.5 only on the Anthropic API with Claude Code 2.1.293 or later. On Amazon Bedrock, Google Cloud or Microsoft Foundry it still means Haiku 4.5.
+
+The skills that spawn subagents (`adversarial-review`, `next-pr`, `review-prs`) don't pin a model. Their subagents run on the session's model, or lower if your own `CLAUDE.md` sets a model policy. Don't set `CLAUDE_CODE_SUBAGENT_MODEL`: it moves every subagent without a `model:` to that model, the reviewers and the judge included, and those are judgment calls. If you want a policy, add it to your `CLAUDE.md`, e.g. "Subagents don't set a model heavier than the session's. Searches and file reads run on haiku. Reviews and code edits stay on the session model."
+
 ## Update
 
-Run `./install.sh` again. It pulls the latest changes, links new skills and removes links to skills that were deleted. Use `--no-pull` to relink without pulling.
+Run `./install.sh` again. It pulls the latest changes, links new skills (and agents, if enabled) and removes links to ones that were deleted. Use `--no-pull` to relink without pulling.
 
 `./install.sh` also sets `core.hooksPath` to `githooks/`, so from then on a plain `git pull`, in the terminal or an editor, relinks on its own and repacks any Desktop zip whose skill changed. This replaces `.git/hooks` for this clone. Undo with `git config --unset core.hooksPath`.
 
