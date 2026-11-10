@@ -3,6 +3,7 @@ name: commit-title
 description: Write a gitmoji commit title for the current work, or one title per separate piece of work, and rate the push risk of each.
 disable-model-invocation: true
 allowed-tools: Bash(git diff *) Bash(git status *) Bash(${CLAUDE_SKILL_DIR}/copy.sh *)
+model: haiku
 ---
 
 ## Working tree

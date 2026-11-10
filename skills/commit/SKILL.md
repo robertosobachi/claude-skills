@@ -3,6 +3,7 @@ name: commit
 description: Stage and commit the current work, one commit per separate piece of work, each with a gitmoji title, and rate the push risk of each. Never pushes.
 disable-model-invocation: true
 allowed-tools: Bash(git add *) Bash(git commit *) Bash(git diff *) Bash(git status *) Bash(git log *)
+model: haiku
 ---
 
 ## Working tree
