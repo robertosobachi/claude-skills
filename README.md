@@ -2,93 +2,110 @@
 
 Skills for [Claude Code](https://code.claude.com/docs/en/skills) that I use day to day, generalised so they work for anyone.
 
-## Why
+## Install
 
-This is my working toolkit. I use it and improve it on personal projects, when practising and at work, so changes come from real use. The skills follow my practices but contain nothing personal or company-specific: copy them or install them as they are.
+1. Clone the repo:
+
+   ```
+   git clone https://github.com/robertosobachi/claude-skills
+   cd claude-skills
+   ```
+
+2. Link the skills into `~/.claude/skills`, or `$CLAUDE_SKILLS_DIR` if set. A folder with the same name that isn't a symlink is skipped.
+
+   ```
+   ./install.sh
+   ```
+
+3. Optional: also link the subagents in [`agents/`](agents/) into `~/.claude/agents`, or `$CLAUDE_AGENTS_DIR`. See [Subagents](#subagents).
+
+   ```
+   ./install.sh --with-agents
+   ```
+
+4. Check it worked: the script prints `linked <name>` for each skill. In Claude Code, type `/which-skill`.
+
+## Update
+
+- Run `./install.sh` again: it pulls, links new skills and removes links to deleted ones. `--no-pull` relinks without pulling.
+- Or `git pull`: the hooks `./install.sh` enables (`core.hooksPath`) relink on their own. Undo with `git config --unset core.hooksPath`.
 
 ## Skills
 
-| Skill | What it does | Use when | Takes action | Invoke |
-|---|---|---|---|---|
-| [`adversarial-review`](skills/adversarial-review/SKILL.md) | Tries to prove a change wrong before it ships: four fresh-context reviewers (correctness, contracts, behaviour, tests) hunt for problems, then a fresh judge checks every finding against the code and drops what has no evidence. Reports blockers, should-fix items, up to 5 nits and unverifiable items. Defaults to the current branch, uncommitted work included. For a PR it can run the repo's checks in a temporary worktree, after asking. Also runs inside `review-prs` when you say yes to its adversarial pass. Never edits, commits, pushes or comments. | Your change is ready and you want it attacked before it ships | No | `/adversarial-review [PR, branch or path] [base]` |
-| [`ai-practice`](skills/ai-practice/SKILL.md) | Turns the session into practice at building AI tooling on the task at hand, with a measure agreed up front. Appends each session to `~/notes/ai-practice-log.md`, outside the repo. | Starting a session where you want to build tooling, not just prompt | Appends to the log | `/ai-practice` |
-| [`annotate-pr`](skills/annotate-pr/SKILL.md) | Drafts the comments to leave on your own PR so reviewers get the why behind changes the code doesn't explain. Sorts each into a PR comment, a code comment (the why still matters after merge) or a question for you when the reason isn't in the evidence, with line anchors checked against the diff. Never posts. | Your PR is up, or about to be, and some changes need their reason spelled out | No | `/annotate-pr [PR number, URL or base branch]` |
-| [`answer-review`](skills/answer-review/SKILL.md) | Works through review comments on your own PR or design doc: checks each reviewer's premise against the code, classifies it as blocking or not, gives a verdict, drafts the change and a short reply (asking for the reason when a comment implies a standard without one), and tracks every thread to an end state. Never posts, resolves, commits or pushes. | You got review comments on your PR or doc | No | `/answer-review <PR or doc URL>` |
-| [`commit`](skills/commit/SKILL.md) | Stages and commits the current work, one commit per separate piece, each with a `commit-title` style title. Splits by whole file, rates the push risk of each commit (🟢/🟡/🔴), never pushes and prints the command to undo. | The work is done and you want it committed in clean groups | Stages and commits | `/commit [hint]` |
-| [`commit-title`](skills/commit-title/SKILL.md) | Writes a gitmoji title, or the format the repo's `CLAUDE.md` sets, for the staged changes, falling back to unstaged changes, then the conversation. One title per separate piece, each with a push risk rating (🟢/🟡/🔴), prints paste-ready `git add` and `git commit` commands and copies a single title to the clipboard. | You want the title but will commit yourself | No | `/commit-title [hint]` |
-| [`explain-the-diff`](skills/explain-the-diff/SKILL.md) | Makes sure you understand your own mostly agent-written change before you send it: explains the diff concept first (the background, the core idea in plain words with an example, then a walk through the changes in reading order with `file:line` anchors), then quizzes you one question at a time on behaviour and edge cases and says where your understanding differs from the code. Ends with ready to send, or what to re-read. Defaults to the current branch, uncommitted work included. Never edits, commits, posts or comments. | Your change is done and you're about to open or send the PR | No | `/explain-the-diff [PR or branch] [base]` |
-| [`grill-me`](skills/grill-me/SKILL.md) | Interviews you one question at a time before any plan exists, each question with a recommended answer and its trade-off, settling decisions in dependency order and looking up in the code what the code can answer. Ends with the settled decisions, open questions, assumptions and agreed terms. Never edits code. | You have a feature, design doc, refactor or decision in your head and want it pinned down before planning | No, unless you ask for the summary as a file in a git-ignored folder; never commits or posts | `/grill-me [topic, doc or plan]` |
-| [`handover-prompt`](skills/handover-prompt/SKILL.md) | Writes a prompt that lets a fresh session pick up the current work where it stands: goal, gating, what to read first, verified state, decisions not to reopen, what's open and the task. Points at existing docs instead of copying them. | You're ending a session and will continue in a new one | Writes the prompt file and updates the plan's notes, never commits or posts | `/handover-prompt [what the next session is for]` |
-| [`kickoff`](skills/kickoff/SKILL.md) | Turns a requirements page or ticket into a plan of small, independently reviewable PRs: reads the requirements and review conventions, maps the existing feature to copy, slices the work and records a review baseline. Writes no code and stops for approval. | You're starting a feature, epic or ticket in an existing repo | Writes the plan and session log to a git-ignored folder, never commits or posts | `/kickoff <requirements URL or ticket key>` |
-| [`next-pr`](skills/next-pr/SKILL.md) | Builds the next PR from a `kickoff` plan, or any plan with a PR list: re-checks the plan against the code, stops for approval, then builds, tests, mutation-tests new assertions and reviews the diff. Hands over the unstaged diff with commit title, PR title and description. | A plan is approved and you're ready to build the next PR | Edits code and updates the plan and session log, never stages, commits or pushes | `/next-pr [PR number or name]` |
-| [`peer-feedback-notes`](skills/peer-feedback-notes/SKILL.md) | Turns what you noticed about a colleague into dated, evidence-based notes for the performance review, rated 🟢/🟡/🔴. Flags what needs action now instead of at review time, separates individual behaviour from process problems and drafts escalation messages. Optional `gh` scripts for PR and review evidence. | You want to record something a colleague did, good or bad, for peer feedback | No, notes stay in chat and are never written to disk or sent | `/peer-feedback-notes`, or describe what happened |
-| [`pr-description`](skills/pr-description/SKILL.md) | Drafts the PR title and description for the current branch from its commits and diff, in the repo's format: PR template first, then its recent titles. A plain-words summary, the changes as bullets and the blast radius as bullets. Never creates, edits or posts the PR. | The branch is ready and you need the PR text | No | `/pr-description [base branch]` |
-| [`review-conventions`](skills/review-conventions/SKILL.md) | Creates, folds into or checks a repo's review conventions doc: every reasoned review comment becomes a rule with its reason and a pre-PR checklist line. Seeds from generic rules plus the repo's review history. | Starting in a repo with no conventions doc, after a review round, or before opening a PR | Writes the doc to a git-ignored folder, never commits or posts | `/review-conventions [create\|fold\|check]` |
-| [`review-prs`](skills/review-prs/SKILL.md) | Light, unblocking review of one or more GitHub PRs, stacked ones included, with a merge verdict and approval trade-off per PR, and short, plain, emoji-led comments (🔴 must fix, ❓ question, 💡 suggestion), each with a note for you on why it was raised. Applies each repo's own `CLAUDE.md`, `AGENTS.md` and review conventions doc to the files they govern, and skips points already raised on the PR. When the PR changes tests and `review-tests` is installed, checks them by reading against its rules: can each assertion go red, does the name claim more than the body checks. A failing CI check counts towards the verdict. Asks whether to add an `adversarial-review` pass per PR and fold its verified findings into the comments. Never posts anything. | You have PRs to review | No | `/review-prs [PR URLs]`, or paste PR URLs and ask for a review; say yes to the adversarial pass to go deeper. `/review-prs quick <head> <base>` reviews a local branch |
-| [`review-tests`](skills/review-tests/SKILL.md) | Reads the tests your branch adds or changes the way a reviewer will, before the PR opens: plain-words names that say exactly what's asserted, a body that follows the name, hidden variants settled, one scenario per example, house patterns matched, and a mutation for every new assertion that proves it can go red. Applies the repo's own `CLAUDE.md`, `AGENTS.md` and conventions over its default rules, so it works with any test framework. Reports per test file and stops for approval, then edits test files only. Its rules also feed the test check in `review-prs`. | Your tests pass and you want them readable before a reviewer sees them | Edits test files after approval, never application code; never stages, commits or pushes | `/review-tests [base branch]` |
-| [`review-evidence-log`](skills/review-evidence-log/SKILL.md) | Keeps a performance-review evidence log up to date, weekly and unattended: your work, plus facts about teammates' work you saw, from Slack, GitHub, Confluence and Zoom stand-up summaries, every line with a link and readable without opening it. Without a GitHub token it hands you a read-only `gh` prompt to run and paste back. Read only on every source. | You want evidence for your review collected as you go, not reconstructed at the end | Writes one local log file and creates a scheduled task at setup, never posts | `/review-evidence-log`, or "update my review log" |
-| [`should-this-exist`](skills/should-this-exist/SKILL.md) | Challenges a task, list, report or automation before you do it: checks who owns it, runs a few lenses and gives one verdict (drop, delegate, defer, shrink or do) with the smallest version worth doing. Waits for your go before doing anything. | You're about to take on work and aren't sure it's worth it | No | `/should-this-exist [task]` |
-| [`slack-morning-brief`](skills/slack-morning-brief/SKILL.md) | Sets up or runs a weekday brief of decisions, changes and incidents across the Slack workspace, channels you're not in included. Read only in Slack. | You want to know what changed overnight before you start work | Creates a scheduled task at setup, never posts in Slack | `/slack-morning-brief` |
-| [`which-model`](skills/which-model/SKILL.md) | Suggests the model and effort level for a task, from a dated table of the current Claude lineup, or the next step when a result falls short: check your own work, raise effort one level, then move up a model. Prints the `/model` and `/effort` commands to type, and says when to `/compact` first. | You're starting a task or a result keeps falling short | No | `/which-model [task, or what went wrong]` |
-| [`which-skill`](skills/which-skill/SKILL.md) | Reads the conversation and git state and suggests the skill to start with, from every skill installed, not just this repo. | You're about to start and aren't sure which skill fits | No | `/which-skill [task]` |
+| Skill | What it does | Invoke |
+|---|---|---|
+| [`adversarial-review`](skills/adversarial-review/SKILL.md) | Four fresh reviewers try to prove your change wrong and a judge keeps only findings the code backs; never edits, commits, pushes or comments. | `/adversarial-review [PR, branch or path] [base]` |
+| [`ai-practice`](skills/ai-practice/SKILL.md) | Turns the session into practice at building AI tooling, with a measure agreed up front, and appends it to `~/notes/ai-practice-log.md`. | `/ai-practice` |
+| [`annotate-pr`](skills/annotate-pr/SKILL.md) | Drafts the comments to leave on your own PR so reviewers get the why the code doesn't show; never posts. | `/annotate-pr [PR number, URL or base branch]` |
+| [`answer-review`](skills/answer-review/SKILL.md) | Checks each review comment on your PR or doc against the code, then drafts the change and reply; never posts, resolves, commits or pushes. | `/answer-review <PR or doc URL>` |
+| [`commit`](skills/commit/SKILL.md) | Stages and commits the current work, one commit per piece with a push risk rating; never pushes and prints the undo command. | `/commit [hint]` |
+| [`commit-title`](skills/commit-title/SKILL.md) | Writes a gitmoji or repo-format title per piece, prints `git add` and `git commit` commands and copies a single title to the clipboard; never commits. | `/commit-title [hint]` |
+| [`explain-the-diff`](skills/explain-the-diff/SKILL.md) | Explains your mostly agent-written change in plain words, then quizzes you one question at a time and says if it's ready to send; read only. | `/explain-the-diff [PR or branch] [base]` |
+| [`grill-me`](skills/grill-me/SKILL.md) | Interviews you one question at a time, each with a recommended answer, until the decisions are settled; writes a file only if you ask. | `/grill-me [topic, doc or plan]` |
+| [`handover-prompt`](skills/handover-prompt/SKILL.md) | Writes a prompt file that lets a fresh session pick up the current work where it stands, and updates the plan's notes; never commits or posts. | `/handover-prompt [what the next session is for]` |
+| [`kickoff`](skills/kickoff/SKILL.md) | Turns a requirements page or ticket into a plan of small reviewable PRs in a git-ignored folder, then stops for approval; writes no code. | `/kickoff <requirements URL or ticket key>` |
+| [`next-pr`](skills/next-pr/SKILL.md) | Builds the next PR from a plan: stops for approval after re-checking it, then builds, tests and hands over the unstaged diff; never stages or commits. | `/next-pr [PR number or name]` |
+| [`peer-feedback-notes`](skills/peer-feedback-notes/SKILL.md) | Turns what you noticed about a colleague into dated, evidence-based review notes and flags what needs action now; stays in chat, never saved or sent. | `/peer-feedback-notes`, or describe what happened |
+| [`pr-description`](skills/pr-description/SKILL.md) | Drafts the PR title and description for the current branch in the repo's format, from its commits and diff; never creates, edits or posts it. | `/pr-description [base branch]` |
+| [`review-conventions`](skills/review-conventions/SKILL.md) | Creates, folds comments into or checks a repo's review conventions doc in a git-ignored folder, one rule and checklist line per comment; never commits or posts. | `/review-conventions [create\|fold\|check]` |
+| [`review-evidence-log`](skills/review-evidence-log/SKILL.md) | Collects evidence of your work and teammates' from Slack, GitHub, Confluence and Zoom into one local log, weekly and unattended; read only on every source. | `/review-evidence-log`, or "update my review log" |
+| [`review-prs`](skills/review-prs/SKILL.md) | Light, unblocking review of GitHub PRs or a local branch, with a merge verdict and paste-ready comments; can add an adversarial pass; never posts. | `/review-prs [PR URLs]` or `/review-prs quick <head> <base>` |
+| [`review-tests`](skills/review-tests/SKILL.md) | Reviews your branch's new or changed tests for clear names and assertions that can go red, then edits test files after approval; never commits. | `/review-tests [base branch]` |
+| [`should-this-exist`](skills/should-this-exist/SKILL.md) | Challenges a task, report or automation before you do it and gives one verdict: drop, delegate, defer, shrink or do; waits for your go. | `/should-this-exist [task]` |
+| [`slack-morning-brief`](skills/slack-morning-brief/SKILL.md) | Sets up or runs a weekday brief of decisions, changes and incidents across Slack, channels you're not in included; never posts. | `/slack-morning-brief` |
+| [`which-model`](skills/which-model/SKILL.md) | Suggests the model and effort level for a task, or the next step when a result falls short, and prints the `/model` and `/effort` commands. | `/which-model [task, or what went wrong]` |
+| [`which-skill`](skills/which-skill/SKILL.md) | Reads the conversation and git state and suggests the skill to start with, from every skill installed, not just this repo. | `/which-skill [task]` |
+
+## Requirements
+
+Every skill needs Claude Code, git and bash. These need more:
+
+| Skill | Needs |
+|---|---|
+| `adversarial-review` | Subagents, 5 per review (four reviewers and a judge) |
+| `annotate-pr` | `gh` if it works, otherwise git alone |
+| `answer-review` | `gh`, or pasted `gh` output. For docs, a wiki connector or pasted text |
+| `next-pr` | Subagents |
+| `peer-feedback-notes` | Optional: `gh` with access to the org's repos, for its GitHub scripts |
+| `pr-description` | `gh` if it works, otherwise git alone, listing the `gh` commands it skipped |
+| `review-evidence-log` | Slack, Atlassian and Zoom connectors (each optional), a read-only GitHub token or a pasted `gh` prompt, and Cowork scheduled tasks on your machine to run on its own. Cloud routines can't reach the local log |
+| `review-prs` | `git fetch`, `gh` if it works, `review-tests` for the test check, subagents for the adversarial pass. `quick` needs git alone |
+| `slack-morning-brief` | A Slack connector, and scheduled-task tools (Cowork) to run on its own |
+
+## Subagents
+
+- `./install.sh --with-agents` links [`agents/Explore.md`](agents/Explore.md), which overrides the built-in Explore subagent to run on `haiku`. The choice is saved in this clone's git config; `./install.sh --without-agents` removes the links.
+- `haiku` is Haiku 5.5 only on the Anthropic API with Claude Code 2.1.293+; on Bedrock, Google Cloud or Foundry it's Haiku 4.5.
+- `adversarial-review`, `next-pr` and `review-prs` don't pin a model. Their subagents run on the session's model, or lower if your own `CLAUDE.md` sets a model policy.
+- Don't set `CLAUDE_CODE_SUBAGENT_MODEL`: it moves every subagent without a `model:` to that model, the reviewers and the judge included. Put a policy in your `CLAUDE.md` instead.
+
+## Claude Desktop and claude.ai
+
+Chat there doesn't read `~/.claude/skills`, so upload zips instead: run `./package.sh`, then upload each zip from `dist/` in Customize > Skills. Uploads sync to every device on the same account.
+
+- With no arguments it packs the skills that work without a local repo, git or `gh`: `grill-me`, `handover-prompt`, `peer-feedback-notes`, `review-evidence-log`, `should-this-exist` and `slack-morning-brief`. Pass names to pack others, e.g. `./package.sh which-skill`.
+- Uploads don't update. After a pull, the hook repacks the zips whose skill changed and names each one to re-upload. After changing a skill yourself, run `./package.sh` again and replace the upload.
+
+## Evals
+
+[`evals/review-prs/`](evals/review-prs/README.md) is a regression check for `review-prs`, comparing each edit to the skill with the version before it.
+
+## Lint
+
+Run `bash lint.sh` after changing a skill. It's manual, so a broken lint never blocks an install.
+
+## Why
+
+This is my working toolkit. I use it and improve it on personal projects, when practising and at work, so changes come from real use. The skills follow my practices but contain nothing personal or company-specific: copy them or install them as they are.
 
 ## Why some steps stay manual
 
 Some skills stop before the last step and print a command to paste or text to retype instead. That's deliberate.
 
 - **Keep the skill sharp.** Doing these steps by hand keeps the muscle working. They take seconds, and that's worth more than the time the AI would save.
-- **Review before anything critical.** Steps that could trigger a deploy or a release, or change code in production, stay manual so there's a chance to review them before they run. A mistake there can damage the integrity of the system itself. `commit` never pushes, `commit-title` prints the commands instead of running them, `review-prs` never posts and `answer-review` never posts or resolves.
+- **Review before anything critical.** Steps that could trigger a deploy or a release, or change code in production, stay manual so there's a chance to review them before they run. A mistake there can damage the integrity of the system itself.
 
 On top of this, I keep my own restrictions and guardrails in place to block unwanted actions by the AI.
-
-## Install
-
-Needs Claude Code, git and bash. `review-prs` fetches each PR with `git fetch`, asking you to run it if the sandbox blocks it, and uses `gh` for titles, existing comments and CI status if it works; `/review-prs quick <head> <base>` needs git alone. It reads the test rules from `review-tests` when that skill is installed next to it, and skips that check otherwise. `adversarial-review` needs subagents: 5 per review (four reviewers and a judge), so `review-prs` asks before running it on each PR. `answer-review` does the same, asking you to run the `gh` commands and paste the output; for docs it uses a wiki connector or pasted text. `pr-description` uses `gh` if it works, otherwise it works from git alone and lists the `gh` commands it skipped. `annotate-pr` does the same, without the list. `slack-morning-brief` needs a Slack connector, and scheduled-task tools (Cowork) to run on its own. `review-evidence-log` uses Slack, Atlassian and Zoom connectors if present (each optional), an optional read-only GitHub token, and a scheduled-task tool that runs on your machine (Cowork) to run on its own; cloud routines can't reach the local log. `peer-feedback-notes` works from what you tell it; its GitHub scripts are optional and need `gh` authenticated with access to the org's repos.
-
-```
-git clone https://github.com/robertosobachi/claude-skills
-cd claude-skills && ./install.sh
-```
-
-Each skill is symlinked into `~/.claude/skills`, or `$CLAUDE_SKILLS_DIR` if set. An existing folder with the same name that isn't a symlink is skipped. Invoke a skill by name, e.g. `/commit-title`.
-
-### Subagents (opt-in)
-
-```
-./install.sh --with-agents
-```
-
-Also symlinks each file in [`agents/`](agents/) into `~/.claude/agents`, or `$CLAUDE_AGENTS_DIR` if set. Today that's one file, [`Explore.md`](agents/Explore.md). It overrides the built-in Explore subagent so it runs on `haiku` and not on the session's model, which keeps file searches cheap. The choice is saved in this clone's git config, so later installs and pulls keep it. `./install.sh --without-agents` removes the links.
-
-The `haiku` alias means Haiku 5.5 only on the Anthropic API with Claude Code 2.1.293 or later. On Amazon Bedrock, Google Cloud or Microsoft Foundry it still means Haiku 4.5.
-
-The skills that spawn subagents (`adversarial-review`, `next-pr`, `review-prs`) don't pin a model. Their subagents run on the session's model, or lower if your own `CLAUDE.md` sets a model policy. Don't set `CLAUDE_CODE_SUBAGENT_MODEL`: it moves every subagent without a `model:` to that model, the reviewers and the judge included, and those are judgment calls. If you want a policy, add it to your `CLAUDE.md`, e.g. "Subagents don't set a model heavier than the session's. Searches and file reads run on haiku. Reviews and code edits stay on the session model."
-
-## Update
-
-Run `./install.sh` again. It pulls the latest changes, links new skills (and agents, if enabled) and removes links to ones that were deleted. Use `--no-pull` to relink without pulling.
-
-`./install.sh` also sets `core.hooksPath` to `githooks/`, so from then on a plain `git pull`, in the terminal or an editor, relinks on its own and repacks any Desktop zip whose skill changed. This replaces `.git/hooks` for this clone. Undo with `git config --unset core.hooksPath`.
-
-## Claude Desktop and claude.ai
-
-Chat in Claude Desktop and claude.ai doesn't read `~/.claude/skills`. Upload the skills there as zips instead.
-
-```
-./package.sh
-```
-
-- With no arguments it packs `peer-feedback-notes`, `handover-prompt`, `slack-morning-brief`, `review-evidence-log` and `should-this-exist`. The other skills need a local repo, git or `gh`, which chat can't reach. Pass names to pack others, e.g. `./package.sh which-skill`.
-- Upload each zip from `dist/` in Customize > Skills. Uploaded skills sync to every device signed in to the same account.
-- Uploads don't update. After a pull, the hook repacks the zips whose skill changed and names each one to re-upload. After changing a skill yourself, run `./package.sh` again and replace the upload.
-
-## Evals
-
-[`evals/review-prs/`](evals/review-prs/README.md) is a regression check for `review-prs`: fixed cases, a checklist and several runs per skill version, so an edit to the skill can be compared with the one before it. The method lives here, the cases live in a private repo you point it at. It sits outside `skills/`, so installs don't get it.
-
-## Lint
-
-Run `bash lint.sh` after changing a skill. It runs `claude plugin validate skills` if `claude` is installed, then checks what drifts without anyone noticing: each skill's `name` matches its folder, descriptions have no `<` (the Desktop upload rejects them), `argument-hint` values are quoted, every skill keeps its "Don't edit this skill's files" rule, the style pass and push-risk blocks copied across skills stay identical, and the README table matches `skills/`. It's manual, so a broken lint never blocks an install.
 
 ## Licence
 
