@@ -64,9 +64,19 @@ For each case it makes a detached worktree at the head, restores `guidelines/`, 
 
 Each run also saves its stream-json trace. `tooltrace.py <run>.trace.jsonl` prints the tool calls, the failed ones and the retries (a failed call followed by another call to the same tool), and `summary.py` prints their medians per group. The report only shows what the skill concluded. The trace shows what it tripped over on the way: a blocked `gh`, a wrong path, an instruction that no longer matches the repo. Errors going up between two skill versions with the same pass count means the skill now works around something, so read the failed calls.
 
-Each run's header records the machine, skill commit (`-dirty` for uncommitted SKILL.md edits), Claude Code version, model and a hash of `~/.claude/CLAUDE.md`. `summary.py` only groups runs that share skill, Claude Code version and model. If the CLAUDE.md hash changed between two groups, check that before blaming the skill.
+Each run's header records the machine, skill commit (`-dirty` for uncommitted SKILL.md edits), Claude Code version, model, effort and a hash of `~/.claude/CLAUDE.md`. `summary.py` only groups runs that share skill, Claude Code version, model and effort. If the CLAUDE.md hash changed between two groups, check that before blaming the skill.
 
-Env: `CLAUDE_EVAL_MODEL`, `CLAUDE_JUDGE_MODEL`, `CLAUDE_EVAL_FLAGS`.
+Env: `CLAUDE_EVAL_MODEL`, `CLAUDE_EVAL_EFFORT`, `CLAUDE_JUDGE_MODEL`, `CLAUDE_EVAL_FLAGS`.
+
+To compare models, run the same cases once per setting and leave the judge on its default model, so only the reviewer changes:
+
+```
+evals/review-prs/run.sh                                                   # your default
+CLAUDE_EVAL_MODEL=sonnet CLAUDE_EVAL_EFFORT=medium evals/review-prs/run.sh
+CLAUDE_EVAL_MODEL=sonnet CLAUDE_EVAL_EFFORT=high evals/review-prs/run.sh
+```
+
+The cheaper setting wins only if it matches the default on the judge checks.
 
 ## Checking the judge
 

@@ -6,6 +6,7 @@
 #
 # Env:
 #   CLAUDE_EVAL_MODEL  model for the review runs (default: your default model)
+#   CLAUDE_EVAL_EFFORT effort level for the review runs (default: the model's default)
 #   CLAUDE_JUDGE_MODEL model for the judge (default: your default model)
 #   CLAUDE_EVAL_FLAGS  extra flags for the review runs
 #                      (default: --allowedTools Bash(git:*),Read,Grep,Glob)
@@ -35,6 +36,7 @@ fi
 # Flags go after the prompt: --allowedTools takes several values and would swallow it.
 read -r -a run_flags <<< "${CLAUDE_EVAL_FLAGS:---allowedTools Bash(git:*),Read,Grep,Glob}"
 [[ -n "${CLAUDE_EVAL_MODEL:-}" ]] && run_flags+=(--model "$CLAUDE_EVAL_MODEL")
+[[ -n "${CLAUDE_EVAL_EFFORT:-}" ]] && run_flags+=(--effort "$CLAUDE_EVAL_EFFORT")
 judge_flags=()
 [[ -n "${CLAUDE_JUDGE_MODEL:-}" ]] && judge_flags+=(--model "$CLAUDE_JUDGE_MODEL")
 
@@ -123,6 +125,7 @@ for name in "${cases[@]}"; do
       echo "skill: $skill_sha"
       echo "claude: $claude_version"
       echo "model: ${CLAUDE_EVAL_MODEL:-default}"
+      echo "effort: ${CLAUDE_EVAL_EFFORT:-default}"
       echo "global_claude_md: ${global_hash:-none}"
       echo "case: $name"
       echo "-->"

@@ -3,7 +3,7 @@
 
 Usage: summary.py <case dir> [<case dir> ...]
 
-Groups runs by (skill, Claude Code version, model): only runs in the same
+Groups runs by (skill, Claude Code version, model, effort): only runs in the same
 group are comparable. If a run has a <run>.me.md with your own J1-J7
 verdicts, it also reports how often the judge agreed with you per item.
 Runs with a <run>.trace.jsonl also get median tool calls, errors and retries.
@@ -61,7 +61,8 @@ def main():
             with open(run + ".md", encoding="utf-8") as f:
                 text = f.read()
             h = header(text)
-            key = (h.get("skill", "?"), h.get("claude", "?"), h.get("model", "?"))
+            key = (h.get("skill", "?"), h.get("claude", "?"), h.get("model", "?"),
+                   h.get("effort", "default"))
             g = groups[key]
             results = check(text)
             g["runs"] += 1
@@ -78,8 +79,8 @@ def main():
                     agreement[item][0] += j[item] == v
                     agreement[item][1] += 1
 
-    for (skill, claude, model), g in sorted(groups.items()):
-        print(f"skill {skill} | claude {claude} | model {model} | {g['runs']} run(s)")
+    for (skill, claude, model, effort), g in sorted(groups.items()):
+        print(f"skill {skill} | claude {claude} | model {model} | effort {effort} | {g['runs']} run(s)")
         print(f"  script: {g['script']}/{g['script_total']}")
         if g["tools"]:
             med = {k: median(t[k] for t in g["tools"]) for k in ("tools", "errors", "retries")}
