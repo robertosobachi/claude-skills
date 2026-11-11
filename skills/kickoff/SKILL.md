@@ -35,7 +35,7 @@ Turn a requirements page or ticket into an approved plan of small, independently
 
 ### 3. Ask for the reference feature key; find and confirm its commits
 
-- Ask the user for a key, constant or class from the existing feature this work resembles.
+- Ask the user for a key, constant or class from the existing feature this work resembles. If more than one resembles it, ask for the one they'd hold up as the standard, not just the closest: the plan copies its patterns.
 - Find its commits on the default branch with `git log -S '<key>' --oneline origin/<default>` (`-G` for a pattern; `git symbolic-ref --short refs/remotes/origin/HEAD` names the default). Use `--all` only if the feature isn't merged, and drop copies of one commit and commits from the new work. Follow merge commits back to their PRs if useful.
 - Show the user the commit list and wait for confirmation before using it. Drop commits they reject.
 
@@ -54,7 +54,7 @@ Each PR must be reviewable on its own:
 - An independent branch off the main branch by default. Stack only when a PR truly needs another's code, and say why.
 - A name that might still change gets one constant, plus, if the repo has feature flags, a flag that stays off in production until the name is final.
 - Order PRs by deploy safety (for example a column before the code that reads it), and state each PR's deploy prerequisites.
-- Mark which PRs can be built at the same time. Two PRs collide when both touch a sequence-numbered file (migrations, schema versions), a shared registry (routes, translation files, feature-flag lists, module or DI registration), a lockfile or a generated file. PRs that collide can't be built in parallel; say which goes first.
+- Mark which PRs can be built at the same time. Two PRs collide when both touch a sequence-numbered file (migrations, schema versions), a shared registry (routes, translation files, feature-flag lists, module or DI registration), a lockfile or a generated file. PRs that collide can't be built in parallel; say which goes first. The exception is a clash that is only a sequence number between independent changes: build them in parallel and renumber at merge (the later merge takes the next free number), and say so in both PRs.
 
 For each PR give: branch name, base, scope, files, tests, deploy order, **parallel with** (the PRs it can be built alongside, or "none"), the departures from the reference feature a reviewer will ask about, and **the user's piece**: one key decision or piece of code the user writes or chooses themselves. When the build reaches it, stop and lay out options instead of writing it.
 
@@ -105,6 +105,7 @@ Review conventions for every PR in this plan: <path>.
 ## Rules for whoever picks this up
 - If the plan turns out wrong, fix the plan text and add a dated entry to the session log. Don't work around it silently.
 - Don't start a PR out of order. Tick a PR off only when it merges.
+- Build only the current PR's scope. The other PRs in this plan are context, not work: don't build ahead or add features nobody asked for.
 - Settled decisions are listed in section 2 as Answered. Don't reopen them.
 ```
 
