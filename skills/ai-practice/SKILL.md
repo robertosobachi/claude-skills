@@ -17,7 +17,7 @@ The user uses AI coding tools and wants to move from using them to building and 
    - Is there about 30 minutes to spare today?
    Fewer than two yeses: say so in one line, suggest just doing the task, and stop. Don't log.
 3. Propose one way to do the task that goes one step beyond plain prompting: a custom command or skill, a hook, a subagent, a small script calling the API, an MCP server, or an agent loop for a repetitive job. Pick what fits the task, not the most impressive option. Say in one line why it fits.
-4. Before starting, agree how to measure the result: time taken, PR size, review comments or defects. Pick one or two that the task can actually show.
+4. Before starting, agree how to measure the result: time taken, PR size, review comments, defects or failed and wasted tool calls in the session trace. Pick one or two that the task can actually show.
 5. Build it. The user makes the design decisions and writes the key parts. You review, explain and fill in boilerplate when asked. If they're only consuming (accepting output without shaping it), say so.
 6. Tie in one concept from what you just did: context windows, tokenisation, tool calls at the message level, sampling or why an agent is a loop. Ask them to explain it back in two or three sentences. Correct mistakes plainly.
 7. Log the session (see below).
@@ -36,6 +36,8 @@ Append an entry to `~/notes/ai-practice-log.md` with a single shell append (`mkd
 ```
 
 Outcomes only. No code, prompts, customer data, internal names or confidential details.
+
+When the measure is a score from an LLM judge reading the session trace against a written rubric, put the rubric name and the score in Result, so entries scored with the same rubric can be compared over time.
 
 ## Rules
 
