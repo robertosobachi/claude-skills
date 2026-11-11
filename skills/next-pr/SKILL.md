@@ -45,7 +45,7 @@ Files, tests, and the order you'd build them, plus anything that touches shared 
 
 ## After approval
 
-Before touching code, run the relevant tests once with the commands from `CLAUDE.md` and keep the result as the baseline. A test that already fails there is failing for a reason outside this PR. Mark this PR in progress in section 0, with its worktree if it has one, so a parallel session can see it.
+Before touching code, run the relevant tests once with the commands from `CLAUDE.md` and keep the result as the baseline. A test that already fails there is failing for a reason outside this PR. Set this PR's state in section 0 to `in progress`, with its worktree if it has one, so a parallel session can see it.
 
 1. **Build** up to the user's piece, if any, and stop there for their choice. Then finish.
 2. **Run** the relevant tests and the linter on changed files, using the commands from `CLAUDE.md`. Report what ran and what couldn't. If the repo has no tests or linter, say so.
@@ -58,7 +58,7 @@ Before touching code, run the relevant tests once with the commands from `CLAUDE
    - One commit title in the format the user's instructions or the repo set. One commit per PR unless the user or repo says otherwise.
    - The PR title and description, written to the `pr-description` skill's Write it and Rules sections if it's installed, otherwise as a plain summary, the changes as bullets and the blast radius as bullets. Add a bullet for each departure from the nearest precedent, only where a reviewer would otherwise ask.
    - For a stacked PR whose parent moved: the restack commands (`git rebase --onto <new parent> <old parent head> <branch>`, then `git push --force-with-lease`).
-8. **Record:** update the plan's section 0 and add a dated session-log entry with what was built, deviations from the approved plan and why, what ran, and what is pending. If another session will pick up the next PR, offer to write its prompt with the `handover-prompt` skill if it's installed.
+8. **Record:** update the plan's section 0, with this PR's state set to `handed over`, and add a dated session-log entry with what was built, deviations from the approved plan and why, what ran, and what is pending. If another session will pick up the next PR, offer to write its prompt with the `handover-prompt` skill if it's installed.
 
 ## Stop conditions
 

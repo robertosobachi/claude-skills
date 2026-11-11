@@ -53,6 +53,7 @@ Skills for [Claude Code](https://code.claude.com/docs/en/skills) that I use day 
 | [`review-tests`](skills/review-tests/SKILL.md) | Reviews your branch's new or changed tests for clear names and assertions that can go red, then edits test files after approval; never commits. | `/review-tests [base branch]` |
 | [`should-this-exist`](skills/should-this-exist/SKILL.md) | Challenges a task, report or automation before you do it and gives one verdict: drop, delegate, defer, shrink or do; waits for your go. | `/should-this-exist [task]` |
 | [`slack-morning-brief`](skills/slack-morning-brief/SKILL.md) | Sets up or runs a weekday brief of decisions, changes and incidents across Slack, channels you're not in included; never posts. | `/slack-morning-brief` |
+| [`ticket`](skills/ticket/SKILL.md) | Moves a ticket to its next stage: reads the plan's state, git and the PR, runs the skill for that stage and stops at its gate; never commits, pushes or posts. | `/ticket [ticket key or URL]` |
 | [`which-model`](skills/which-model/SKILL.md) | Suggests the model and effort level for a task, or the next step when a result falls short, and prints the `/model` and `/effort` commands. | `/which-model [task, or what went wrong]` |
 | [`which-skill`](skills/which-skill/SKILL.md) | Reads the conversation and git state and suggests the skill to start with, from every skill installed, not just this repo. | `/which-skill [task]` |
 

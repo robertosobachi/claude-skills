@@ -83,7 +83,7 @@ summary: <one line>
 Review conventions for every PR in this plan: <path>.
 
 ## 0. Current state (<date>)
-<table: PR | branch | what | parallel with | state>, then blockers, flags and gates, drafts, and where the session log is. Every session updates this section before ending.
+<table: PR | branch | what | parallel with | state>, state one of `planned`, `in progress`, `handed over`, `reviewed`, `in review`, `merged` (every PR starts `planned`), then blockers, flags and gates, drafts, and where the session log is. Every session updates this section before ending.
 
 ## 1. Requirements summary
 <source links, short summary, table of what changes>
