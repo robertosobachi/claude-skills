@@ -38,6 +38,7 @@ Collect:
 - The diff, in the form above for the target.
 - The touched files: the same diff with `--name-only`, plus any untracked files.
 - The stated intent: the PR title and body, or the ticket text if the user gave one. If there's neither, say so to reviewer 3 instead of inventing one.
+- The history of the touched files: `git log --oneline --since=1.year <base> -- <touched files>`, for earlier reverts, fixes and decisions in the same area.
 
 If the diff is under ~50 lines, say once that a single pass would do (one reviewer with all four angles, then the judge) and ask whether to run the full panel anyway.
 
@@ -64,6 +65,7 @@ Give each one only:
 - the diff and the list of touched files
 - the raw check output from step 2
 - the stated intent
+- the history of the touched files
 - its angle, below
 
 Don't pass on your own reading of the change. No summary, no hints about where you think the problems are.
