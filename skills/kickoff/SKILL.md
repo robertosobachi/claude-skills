@@ -12,7 +12,7 @@ Turn a requirements page or ticket into an approved plan of small, independently
 
 - Never stage, commit, push or post anywhere (GitHub, issue tracker, wiki, chat). Draft text and give exact commands; the user runs them.
 - The repo's `CLAUDE.md` overrides this skill where they conflict. Test commands, container prefixes, migration rules and house style come from there, not from here.
-- Check every claim against the code before writing it down, and cite `file:line`.
+- Check every claim against the code before writing it down, and cite `file:line`. A decision or number the code can't back cites who supplied it: the requirements page, the user (with the date) or you, marked as an assumption.
 - If the sandbox blocks something (a tracker the connector can't reach, `gh` without auth, a database or local service), say so in one line and give the user the exact command or the exact thing to paste back. Don't guess around it.
 - No AI attribution. Never hard-wrap prose: one paragraph is one line.
 - Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
@@ -54,9 +54,9 @@ Each PR must be reviewable on its own:
 - An independent branch off the main branch by default. Stack only when a PR truly needs another's code, and say why.
 - A name that might still change gets one constant, plus, if the repo has feature flags, a flag that stays off in production until the name is final.
 - Order PRs by deploy safety (for example a column before the code that reads it), and state each PR's deploy prerequisites.
-- Mark which PRs can be built at the same time. Two PRs collide when both touch a sequence-numbered file (migrations, schema versions), a shared registry (routes, translation files, feature-flag lists, module or DI registration), a lockfile or a generated file. PRs that collide can't be built in parallel; say which goes first. The exception is a clash that is only a sequence number between independent changes: build them in parallel and renumber at merge (the later merge takes the next free number), and say so in both PRs.
+- Mark which PRs can be built at the same time. Two PRs collide when both change the same function, when one changes the signature of a function the other calls, or when both touch a sequence-numbered file (migrations, schema versions), a shared registry (routes, translation files, feature-flag lists, module or DI registration), a lockfile or a generated file. PRs that collide can't be built in parallel; say which goes first. The exception is a clash that is only a sequence number between independent changes: build them in parallel and renumber at merge (the later merge takes the next free number), and say so in both PRs.
 
-For each PR give: branch name, base, scope, files, tests, deploy order, **parallel with** (the PRs it can be built alongside, or "none"), the departures from the reference feature a reviewer will ask about, and **the user's piece**: one key decision or piece of code the user writes or chooses themselves. When the build reaches it, stop and lay out options instead of writing it.
+For each PR give: branch name, base, scope, files (with the functions or symbols it changes in each), tests, deploy order, **parallel with** (the PRs it can be built alongside, or "none"), the departures from the reference feature a reviewer will ask about, and **the user's piece**: one key decision or piece of code the user writes or chooses themselves. When the build reaches it, stop and lay out options instead of writing it.
 
 ### 6. Record the practice baseline
 
