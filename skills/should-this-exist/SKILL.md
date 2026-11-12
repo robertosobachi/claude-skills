@@ -28,9 +28,9 @@ If the request already answers them, skip to Step 2 and state the assumptions yo
 Apply only the lenses that fit. One line each.
 
 1. **Select, don't multiply.** Of the N items, which deserve time at all? Rank by value to the stated goal, not by how fast they can be finished.
-2. **Movement vs action.** Sort each item: drop, delegate, defer, do. Default to drop for anything with no owner or no decision attached.
+2. **Movement vs action.** Sort each item: drop, delegate, defer, do. Default to drop for anything with no owner or no decision attached. For building an automation, the "do" signal is a process that already earns real money and already draws complaints from the people it serves. If the area is still exploratory, keep it manual.
 3. **Global before local.** Before improving it, ask whether it should exist at all or be replaced by something different (a dashboard instead of a report, a CI check instead of a review step, an async note instead of a meeting).
-4. **Extract the principle.** If this will recur, what reusable rule, template or check would remove the need to think about it next time?
+4. **Extract the principle.** If this will recur, what reusable rule, template or check would remove the need to think about it next time? If it's one of a trickle of cases nobody has a rule for, collect them and review them as a batch before deciding any one. Such cases are often expensive and low value, and the batch shows whether to stop that work or lower its priority until there's a real case for it.
 5. **Subtract.** What can be unsubscribed from, deleted, cancelled or stopped as a result?
 
 ## Step 3: verdict
