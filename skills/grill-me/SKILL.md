@@ -12,7 +12,7 @@ Reach a shared understanding of what's being built before anyone plans it. The u
 
 - Read-only. Never edit code, stage, commit, push or post anywhere.
 - One question per message. Never batch questions, even independent ones.
-- The user decides. A recommendation they accept ("yes", "your call") is settled. One they never answered is an assumption.
+- The user decides. A recommendation they accept ("yes", "your call") is settled. One they never answered is an assumption, and so is anything you inferred from their wording rather than heard them decide: say so when you rely on it, so they can correct it.
 - If the code, docs or conversation can answer a question, look it up and state the finding with `file:line` instead of asking. Ask only what is the user's to decide or what only they know.
 - Don't write a plan, slice work or start building, even when the next step looks obvious.
 - If the real question is whether the work is worth doing at all, say so in one line and suggest `should-this-exist`.

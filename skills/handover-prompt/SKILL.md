@@ -27,8 +27,8 @@ Use the argument if given. Otherwise ask: one task (build PR 4, answer review ro
 
 - From this conversation: decisions made and by whom, corrections, what's blocked and why, what the user said they'll do themselves.
 - From the repo: current branch, stack and heads, uncommitted changes, plan doc section 0 and the latest session-log entries if they exist.
-- From memory, if the session uses it: which memory entries the next session should read.
-- Before writing the prompt, update the plan's current state and the session log if this session changed them, so the prompt can point to them instead of repeating them.
+- From memory, if the session uses it: which memory entries the next session should read, and which this session proved wrong or stale. Leave those out of the prompt and tell the user which to fix or delete.
+- Before writing the prompt, update the plan's current state and the session log if this session changed them, so the prompt can point to them instead of repeating them. Do the same for rules and corrections the user gave this session that should outlive the next one ("if the migration fails, restore the snapshot first"): put them in the plan's notes, not only in the prompt.
 - Anything the next session will need from the user (a link still to come, whether a local copy of a live page is current): ask now, or list it in the prompt as the first thing to ask.
 
 ## 3. Write it in this shape
