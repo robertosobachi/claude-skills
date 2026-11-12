@@ -91,6 +91,8 @@ For each finding give:
 - confidence: high | medium | low
 
 No finding without evidence. "No findings" is a valid answer; don't pad.
+
+End with a status: complete, partial (what you didn't get to check) or unknown (why you couldn't check). "No findings" only counts as a clean pass when the status is complete.
 ```
 
 ## 4. Judge
@@ -102,10 +104,10 @@ Instruction:
 ```
 For each finding, open the cited file:line and rerun any cited command that's cheap to run. Then mark it:
 - valid: the evidence shows what the claim says
-- invalid: the evidence is missing, wrong, or doesn't support the claim
+- invalid: the evidence is missing, wrong, or doesn't support the claim. Recompute any number the claim rests on. If it doesn't hold, the finding is invalid, not valid with a caveat
 - unverifiable: the claim may be true but can't be confirmed from the code or a command here
 
-One line why for each. Merge duplicates. Keep the highest severity the evidence justifies, and downgrade with a reason when it's overstated.
+One line why for each. Decide from the code and the command output yourself. A finding's explanation is not evidence, and neither is several findings agreeing: the reviewers read the same inputs. Merge duplicates. Keep the highest severity the evidence justifies, and downgrade with a reason when it's overstated.
 ```
 
 ## 5. Report
@@ -115,7 +117,7 @@ In chat, in this order:
 1. **Blockers**, then **Should fix**. Each: `file:line`, the claim, the evidence.
 2. **Nits:** up to 5, one line each.
 3. **Unverifiable:** listed separately, one line each with what would confirm it.
-4. One line on which checks ran and which couldn't, with the reason.
+4. One line on which checks ran and which couldn't, with the reason, and which reviewers ended partial or unknown, with what they didn't check.
 
 If nothing valid survives, say so in one line. Don't fix anything. If `refs/review/*` refs were fetched, mention they can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`.
 
@@ -126,7 +128,7 @@ When another skill (such as `review-prs`) invokes this one:
 - Use the target and base it gives. Don't fetch again.
 - Skip the under-~50-lines question. The caller has decided.
 - Ask the worktree question in step 2 once for all the caller's targets, not once per target.
-- Skip section 5. Hand the judge's verdicts back to the caller (valid, invalid or unverifiable, each with `file:line`, claim, evidence and severity) plus the one line on checks. The caller writes the report.
+- Skip section 5. Hand the judge's verdicts back to the caller (valid, invalid or unverifiable, each with `file:line`, claim, evidence and severity) plus the one line on checks and reviewer status. The caller writes the report.
 
 ## Rules
 
