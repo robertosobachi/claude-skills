@@ -65,11 +65,12 @@ Lookback: Tuesday to Friday, from 18:00 local the previous day. Monday, from 18:
 5. Reply with exactly this, phone-friendly, readable in under 2 minutes:
 
 **Slack brief, <Weekday> <D Mon>**
-<One-line TL;DR, or "Quiet night, nothing that changes your day.">
+<"<K> items, <R> need you." (K = every item kept in step 3, skipped ones included; R = 🔴 items), then a one-line TL;DR. Or "Quiet night, nothing that changes your day.">
 
 **Must know** (max 3)
 - <🔴|🟡|🟢> **<Headline naming the specific thing, ~10 words>**
   <One sentence: what changed and what it means for {{name}}.> #channel · link
+  Next: <the one step {{name}} takes, ~12 words, 🔴 only>
   🌱 <max ~12 words naming the concrete growth angle>
 
 **Good to know** (max 4)
@@ -79,7 +80,7 @@ Lookback: Tuesday to Friday, from 18:00 local the previous day. Monday, from 18:
 +N minor items skipped
 🔴 raise with team · 🟡 watch · 🟢 FYI · 🌱 career
 
-Rules: max 7 items, then "+N minor items skipped", placed before the legend. Omit empty sections. Each item starts with its severity emoji, before the bold headline. "(not final)" goes after the severity emoji, at the start of the headline, e.g. "- 🟡 **(not final) <Headline>**". Mark "(not in channel)" where it applies. Add the 🌱 line only to flagged items, e.g. "🌱 Nobody owns the data scope rules; chance to drive the decision". End with the legend line exactly as above, only when the brief has at least one item. Headlines must make sense without opening the link. No preamble or closing summary. No emojis other than 🔴 🟡 🟢 🌱 as defined above. Straight apostrophes, no em dashes.
+Rules: max 7 items, then "+N minor items skipped", placed before the legend. Omit empty sections. Each item starts with its severity emoji, before the bold headline. "(not final)" goes after the severity emoji, at the start of the headline, e.g. "- 🟡 **(not final) <Headline>**". Mark "(not in channel)" where it applies. Add the 🌱 line only to flagged items, e.g. "🌱 Nobody owns the data scope rules; chance to drive the decision". Every 🔴 item, in either section, gets a "Next:" line before any 🌱 line, naming the one step {{name}} takes, e.g. "Next: raise the moved freeze date at stand-up". End with the legend line exactly as above, only when the brief has at least one item. Headlines must make sense without opening the link. No preamble or closing summary. No emojis other than 🔴 🟡 🟢 🌱 as defined above. Straight apostrophes, no em dashes.
 
 If Slack tools are unavailable, reply with one line saying so. Never invent items, channels or links.
 ```
