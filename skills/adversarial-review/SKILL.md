@@ -77,7 +77,7 @@ Angles:
 1. **Correctness:** logic, edge cases, async and state bugs, error handling.
 2. **Contracts:** types, the shape of APIs between modules, services or client and server, backwards compatibility for existing callers and stored data.
 3. **Behaviour:** does it do what the stated intent says, user-visible regressions, and a11y and i18n where the diff touches UI.
-4. **Tests:** what the tests don't prove, and the failing case they'd add.
+4. **Tests:** what the tests don't prove, and the failing case they'd add. Also whether the diff games them: tests removed, skipped, disabled or loosened, long or fixed waits added, or working code edited only to make a test pass.
 
 Instruction for each:
 

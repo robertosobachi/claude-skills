@@ -41,7 +41,7 @@ If section 0 shows another PR from this plan in progress, build this one in its 
 
 ## Step 2: implementation plan, then stop
 
-Files, tests, and the order you'd build them, plus anything that touches shared code and how existing tests prove the rest is unchanged. If the PR has a **user's piece**, lay out its options with what each changes, and mark where you'll stop. Then stop for approval.
+Files, tests, and the order you'd build them, plus anything that touches shared code and how existing tests prove the rest is unchanged. For a refactor meant to keep behaviour, list each condition and decision-table row in the code being changed, with the test or recorded real input that exercises it: agent refactors drop branches silently. A branch nothing exercises is no evidence, so plan a test that pins it, written and run green before the refactor so the baseline covers it. The baseline and the post-build run are then old against new on the same inputs. If the PR has a **user's piece**, lay out its options with what each changes, and mark where you'll stop. Then stop for approval.
 
 ## After approval
 

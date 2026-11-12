@@ -43,6 +43,7 @@ Check each in-scope example against the list below and against the repo's own ru
 5. Can it go red (2.6). Trace the path from setup to the asserted line. A threshold, flag, env value or early return that ends the path first makes the assertion pass for nothing (for example, a test environment that skips the external call unless the environment is faked). For each new or changed assertion, give the mutation that proves it: the application `file:line`, the edit, and the assertion that should go red. If no mutation turns it red, that is a finding.
 6. House patterns (1.6). Before suggesting a helper, matcher or style, grep the sibling specs and count each option's usages, and give the counts.
 7. Removal (2.1, 2.2, 2.5). Before suggesting an example or assertion go, check: does it answer "why does this code exist", or guard a regression nothing else covers? If so, keep it and fix it. Only something that restates a guarantee the framework or another test already gives can go. Say which case applies.
+8. Gaming. Agents take the shortest path to green. Flag each example the diff deletes, skips or disables, each assertion it removes or loosens, each sleep, fixed wait or raised timeout it adds, and each application change whose only effect is to make a changed test pass. Each goes in the questions unless the diff shows the reason.
 
 Examples outside the diff with the same problem go in the questions. Never change them.
 
@@ -62,7 +63,7 @@ A file with no findings gets one line saying so, plus its mutations. End with wh
 
 ## After approval
 
-1. Edit only what was approved, in test files and test support.
+1. Edit only what was approved, in test files and test support. Before the first edit, record `git status --short` and `git diff --stat HEAD`; after the last, run both again. A non-test path that is new in the list, or whose line counts moved, means an edit went outside test files: undo that edit and say so. Check the file list, don't trust the instruction.
 2. Lint each changed test file with the command from CLAUDE.md or AGENTS.md (or the repo's obvious linter config). Fix what it flags on the lines you changed.
 3. Run the changed examples if the environment allows. If not, say why and give the exact command, by file and line.
 4. Mutations: give the list from step 3 again, updated for the final code, for the user to run: break, expect red, revert.
