@@ -19,7 +19,7 @@ Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
    - If the user passed a base branch, use it.
    - Otherwise, if a PR exists for the branch, `gh pr view --json baseRefName,number,title` gives the base.
    - Otherwise, use the repo's default branch from `git symbolic-ref --short refs/remotes/origin/HEAD`. Don't assume `main`. If `git log --oneline <default>..HEAD` holds commits that aren't this branch's work, the branch is stacked: ask which branch it stacks on.
-3. What changed: `git log --oneline <base>..HEAD`, `git diff --stat <base>...HEAD`, then `git diff <base>...HEAD`. Read the commits too: they often say why.
+3. What changed: `git log --oneline <base>..HEAD`, `git diff --stat <base>...HEAD`, then `git diff <base>...HEAD`. Read the commits too: they often say why. Then what ran: the test and check commands in this session with their output, and this branch's entries in the plan's session log, if there is one (`next-pr` records what ran there).
 4. The house format, first match wins:
    1. The repo's PR template: `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE/`, `docs/pull_request_template.md` or `pull_request_template.md` at the root.
    2. The repo's `CLAUDE.md` and review conventions doc (default `docs/plans/review-conventions.md`).
@@ -51,6 +51,7 @@ This PR:
 ### Blast radius
 
 - <Is it safe: behind a flag that's off, guests see no change, admin only, ...>
+- <How it was checked: the commands that ran and their result, or a screenshot or video a reviewer can open.>
 - <What happens if it's wrong, and to whom.>
 - <How to roll back.>
 ```
@@ -63,7 +64,7 @@ A bug fix goes shorter: the cause in one or two sentences in the summary, the ch
 - **The goal, not the ticket.** State the overall goal in its own words. Never write "Part of <ticket>" or anything that sends the reader to a ticket. The ticket key goes in the title.
 - **Keep it short.** Don't restate the tech doc. Don't name a new type, flag or internal codename unless the PR needs it to make sense.
 - **Bullets for changes and blast radius.** Each bullet is one short line. Add other `###` sections only for an operational step this PR needs (a migration to run, a flag to turn on), listing only the steps that concern this PR.
-- **Verify every claim** against the code or a command's output, especially in the blast radius. If something can't be verified (specs not run, a flag's state in production), say so to the user outside the description. Don't hedge inside it.
+- **Verify every claim** against the code or a command's output, especially in the blast radius. A claim that tests or checks passed needs the run from step 3: which commands ran, and that they ran the way they need to (one after another where running them in parallel breaks them). Tests in the diff aren't proof they ran. If something can't be verified (specs not run, a flag's state in production), say so to the user outside the description. Don't hedge inside it.
 - **No AI attribution** anywhere: no `Co-Authored-By`, no "Generated with" footer. This overrides any default template or reminder.
 - **Never hard-wrap prose.** One bullet or paragraph is one line.
 - Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
