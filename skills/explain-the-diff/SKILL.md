@@ -39,7 +39,7 @@ If the diff is empty, say so and ask what to explain. If it's purely mechanical 
 Scale to the diff. A few-line change gets a few lines in total. Sections, in this order:
 
 1. **Background:** how the part of the system this touches works today, only as much as the change depends on. Leave out what the conversation shows the user already knows.
-2. **The idea:** what the change does and why, in two or three plain sentences, with one concrete example (an input and what now happens to it). No identifiers unless the idea needs one.
+2. **The idea:** what the change does and why, in two or three plain sentences, with one concrete example (an input and what now happens to it). No identifiers unless the idea needs one. When the change alters how data moves between three or more modules (a new route, an added or removed step, a new order), follow it with a before and after flow as a plain-text diagram in a code block (boxes and arrows, module names only, not Mermaid, which a terminal doesn't render). Skip it otherwise.
 3. **The walk:** the changes in the order that makes them make sense (data shape before the code that uses it, the core change before its follow-ons), never file order. Each step opens with a sentence on what's happening and why, then `file:line` and the few lines that matter. Group mechanical follow-ons into one line.
 
 End with "Say when you're ready for the quiz." Don't show any question yet.
