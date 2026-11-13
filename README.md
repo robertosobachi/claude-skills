@@ -34,6 +34,7 @@ Skills for [Claude Code](https://code.claude.com/docs/en/skills) that I use day 
 
 | Skill | What it does | Invoke |
 |---|---|---|
+| [`accessibility`](skills/accessibility/SKILL.md) | Sets up, audits or checks a web repo's accessibility against one standing directive in AGENTS.md or CLAUDE.md, semantic HTML first; edits only after approval, never commits. | `/accessibility [setup\|audit\|check]` |
 | [`adversarial-review`](skills/adversarial-review/SKILL.md) | Four fresh reviewers try to prove your change wrong and a judge keeps only findings the code backs; never edits, commits, pushes or comments. | `/adversarial-review [PR, branch or path] [base]` |
 | [`ai-practice`](skills/ai-practice/SKILL.md) | Turns the session into practice at building AI tooling, with a measure agreed up front, and appends it to `~/notes/ai-practice-log.md`. | `/ai-practice` |
 | [`annotate-pr`](skills/annotate-pr/SKILL.md) | Drafts the comments to leave on your own PR so reviewers get the why the code doesn't show; never posts. | `/annotate-pr [PR number, URL or base branch]` |
