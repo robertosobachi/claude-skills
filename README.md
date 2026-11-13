@@ -53,6 +53,7 @@ Skills for [Claude Code](https://code.claude.com/docs/en/skills) that I use day 
 | [`review-tests`](skills/review-tests/SKILL.md) | Reviews your branch's new or changed tests for clear names and assertions that can go red, then edits test files after approval; never commits. | `/review-tests [base branch]` |
 | [`should-this-exist`](skills/should-this-exist/SKILL.md) | Challenges a task, report or automation before you do it and gives one verdict: drop, delegate, defer, shrink or do; waits for your go. | `/should-this-exist [task]` |
 | [`slack-morning-brief`](skills/slack-morning-brief/SKILL.md) | Sets up or runs a weekday brief of decisions, changes and incidents across Slack, channels you're not in included; never posts. | `/slack-morning-brief` |
+| [`standup-brief`](skills/standup-brief/SKILL.md) | Sets up or runs a weekday standup update from your own Slack, GitHub and Jira activity, with a capacity call; never posts. | `/standup-brief` |
 | [`ticket`](skills/ticket/SKILL.md) | Moves a ticket to its next stage: reads the plan's state, git and the PR, runs the skill for that stage and stops at its gate; never commits, pushes or posts. | `/ticket [ticket key or URL]` |
 | [`which-model`](skills/which-model/SKILL.md) | Suggests the model and effort level for a task, or the next step when a result falls short, and prints the `/model` and `/effort` commands. | `/which-model [task, or what went wrong]` |
 | [`which-skill`](skills/which-skill/SKILL.md) | Reads the conversation and git state and suggests the skill to start with, from every skill installed, not just this repo. | `/which-skill [task]` |
@@ -72,6 +73,7 @@ Every skill needs Claude Code, git and bash. These need more:
 | `review-evidence-log` | Slack, Atlassian and Zoom connectors (each optional), a read-only GitHub token or a pasted `gh` prompt, and Cowork scheduled tasks on your machine to run on its own. Cloud routines can't reach the local log |
 | `review-prs` | `git fetch`, `gh` if it works, `review-tests` for the test check, subagents for the adversarial pass. `quick` needs git alone |
 | `slack-morning-brief` | A Slack connector, and scheduled-task tools (Cowork) to run on its own |
+| `standup-brief` | Slack and Atlassian connectors, a GitHub connector or `gh` (each optional), and scheduled-task tools (Cowork) to run on its own |
 
 ## Subagents
 
@@ -84,7 +86,7 @@ Every skill needs Claude Code, git and bash. These need more:
 
 Chat there doesn't read `~/.claude/skills`, so upload zips instead: run `./package.sh`, then upload each zip from `dist/` in Customize > Skills. Uploads sync to every device on the same account.
 
-- With no arguments it packs the skills that work without a local repo, git or `gh`: `grill-me`, `handover-prompt`, `peer-feedback-notes`, `review-evidence-log`, `should-this-exist` and `slack-morning-brief`. Pass names to pack others, e.g. `./package.sh which-skill`.
+- With no arguments it packs the skills that work without a local repo, git or `gh`: `grill-me`, `handover-prompt`, `peer-feedback-notes`, `review-evidence-log`, `should-this-exist`, `slack-morning-brief` and `standup-brief`. Pass names to pack others, e.g. `./package.sh which-skill`.
 - Uploads don't update. After a pull, the hook repacks the zips whose skill changed and names each one to re-upload. After changing a skill yourself, run `./package.sh` again and replace the upload.
 
 ## Evals
