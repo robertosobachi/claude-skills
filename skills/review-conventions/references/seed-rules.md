@@ -6,6 +6,7 @@ Generic rules that hold in most codebases. Use them to seed a new review convent
 
 - **Put the reason for a departure in the PR description.** When the code departs from what a reader would expect by analogy (an unusual class hierarchy, one thing split in two, a less obvious naming precedent, a duration instead of a timestamp, a hardcoded value), write one sentence of reasoning in the PR description before the PR opens. Reason: the biggest driver of comment volume is a departure whose reason sits where the reviewer can't see it, such as a local plan or the author's head.
 - **Keep code comments for facts the code can't show.** A comment earns its place only if not knowing the fact would cause a regression (an ordering that depends on a framework internal, a filter that covers one field name). Everything else goes in the PR description.
+- **Treat a comment that defends a workaround as a sign the cause is still there.** A new timer, retry or catch-all whose comment explains why it's fine usually patches over an ordering or state problem, and the next agent copies it as the pattern. Fix the cause. If the workaround has to stay, the comment links the ticket that removes it.
 - **Expect unusual structure to draw a comment even when it's correct.** Write the reason down before you're asked. Two reviewers landing on the same unexplained lines means that spot needs a recorded reason.
 - **Explain side effects that depend on code outside the diff.** If a write relies on a guard elsewhere, say so in the description and cover it with a test.
 
@@ -72,6 +73,7 @@ Generic rules that hold in most codebases. Use them to seed a new review convent
 
 - [ ] Every departure has one sentence of reasoning in the description.
 - [ ] No redundant code comments; existing comments untouched.
+- [ ] No new timer, retry or catch-all whose comment explains a workaround away.
 - [ ] Searched for an existing helper or sibling before writing new plumbing.
 - [ ] Test literals follow the repo's convention.
 - [ ] Config fails soft, and every knob is set somewhere real.
