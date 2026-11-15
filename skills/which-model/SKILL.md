@@ -41,5 +41,5 @@ Nothing else.
 
 - Recommend from models.md, not from memory. If the user names a model that isn't in it, say the table doesn't cover it.
 - Never recommend raising effort past `high` on the default model. Recommend the next model up at `medium` instead.
-- Don't recommend plan/execute split aliases, advisor setups or orchestrator patterns. They need measuring on the user's own work first.
+- Don't recommend plan/execute split aliases, advisor setups or orchestrator patterns. They need measuring on the user's own work first. If the user already runs an orchestrator, pick its model from the "leading many subagents" row and each worker's from its own task's row.
 - Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
