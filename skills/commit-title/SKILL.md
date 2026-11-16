@@ -3,7 +3,6 @@ name: commit-title
 description: Write a gitmoji commit title for the current work, or one title per separate piece of work, and rate the push risk of each.
 disable-model-invocation: true
 allowed-tools: Bash(git diff *) Bash(git status *) Bash(${CLAUDE_SKILL_DIR}/copy.sh *)
-model: haiku
 ---
 
 ## Working tree
@@ -27,7 +26,7 @@ Write a commit title for the current work. Describe the first of these that exis
 3. The unstaged changes and untracked files above.
 4. The work done in this conversation.
 
-Only the file stats are above. Before grouping or titling, read what you need: `git diff --staged`, or `git diff -- <paths>` for the files in a piece. Read untracked files directly.
+Only the file stats are above. For a file whose current changes you already made or read in this conversation, and that hasn't changed since, use what you know. Read only the rest: `git diff --staged`, or `git diff -- <paths>` for the files in a piece, and untracked files directly. If unsure whether a file changed since, read it.
 
 Format: if the repo's `CLAUDE.md` sets a commit title format, follow it. Otherwise `:<gitmoji>: <Subject>`:
 

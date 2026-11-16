@@ -3,7 +3,6 @@ name: commit
 description: Stage and commit the current work, one commit per separate piece of work, each with a gitmoji title, and rate the push risk of each. Never pushes.
 disable-model-invocation: true
 allowed-tools: Bash(git add *) Bash(git commit *) Bash(git diff *) Bash(git status *) Bash(git log *)
-model: haiku
 ---
 
 ## Working tree
@@ -22,7 +21,7 @@ model: haiku
 
 Commit the current work. `$ARGUMENTS`, if given, says what to commit or how to split it.
 
-Only the file stats are above. Before grouping or titling, read what you need: `git diff --staged`, or `git diff -- <paths>` for the files in a group. Read untracked files directly.
+Only the file stats are above. For a file whose current changes you already made or read in this conversation, and that hasn't changed since, use what you know. Read only the rest: `git diff --staged`, or `git diff -- <paths>` for the files in a group, and untracked files directly. If unsure whether a file changed since, read it.
 
 1. If anything is staged, commit only the staged changes, as one commit, and leave everything else alone.
 2. Otherwise, group the unstaged changes and untracked files above into separate pieces of work, such as a feature and an unrelated docs update. Files that only make sense together stay in one group. When in doubt, use fewer groups.
