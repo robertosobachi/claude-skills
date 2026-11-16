@@ -1,12 +1,12 @@
 ---
 name: explain-the-diff
-description: Make sure the author of a mostly agent-written change understands it before sending it for review. Explains the diff concept first (the background, the core idea in plain words, then a walk through the changes in reading order with file:line anchors), quizzes the author one question at a time and gives a verdict, ready to send or what to re-read. Defaults to the current branch, uncommitted work included. Read-only, never edits, commits, posts or comments. Use when the user says "explain the diff", "explain my changes to me", "do I understand this change", "quiz me on this PR", or runs /explain-the-diff [PR, branch or base].
+description: Make sure the author of a mostly agent-written change understands it before sending it for review. Asks the author to explain the change in their own words first (skippable), then explains the diff, leading with the gaps (the background, the core idea in plain words, then a walk through the changes in reading order with file:line anchors), quizzes the author one question at a time and gives a verdict, ready to send or what to re-read. Defaults to the current branch, uncommitted work included. Read-only, never edits, commits, posts or comments. Use when the user says "explain the diff", "explain my changes to me", "do I understand this change", "quiz me on this PR", or runs /explain-the-diff [PR, branch or base].
 argument-hint: "[PR number | branch] [base branch]"
 ---
 
 # Explain the diff
 
-Teach the author their own change, then check they got it. Don't send it for review until you can pass a short quiz on it. The explainer and the quiz are for the author only: nothing here is written for reviewers.
+Let the author explain their own change first, teach what they missed, then check they got it. Don't send it for review until you can pass a short quiz on it. The explainer and the quiz are for the author only: nothing here is written for reviewers.
 
 ## Ground rules
 
@@ -34,9 +34,19 @@ If the diff is empty, say so and ask what to explain. If it's purely mechanical 
 - Each touched file in full, and the callers of anything whose behaviour changed. The explainer needs the code around the hunks, not just the hunks.
 - The intent: the conversation, the commit bodies, the PR body, the repo's plan docs (e.g. `docs/plans/`). If the intent isn't anywhere, say so instead of inventing one.
 
-## 3. Explain
+## 3. Your turn first
 
-Scale to the diff. A few-line change gets a few lines in total. Sections, in this order:
+Trying to explain a change before reading an explanation shows the author where their understanding runs out, so they know what to look for. Send one message, with the skip built in:
+
+> Your turn first: in two or three sentences, what does this change do and why? Say "skip" and I'll explain it from scratch.
+
+- Don't ask whether they want to try. The skip in the prompt is the only opt-out.
+- No follow-up questions. "Skip", "no idea" or an empty answer goes straight to the full explainer.
+- Otherwise mark the attempt against the code in a few lines: what's right, what's missing, what's wrong, each with `file:line`. If they describe what the change should do and the code does something else, that's a likely bug, not a misunderstanding: say so in one line.
+
+## 4. Explain
+
+Scale to the diff and to the attempt in step 3. A few-line change gets a few lines in total. If the author made an attempt, lead with the gaps it showed and cut background and walk steps down to one line each for what they already got right. If they skipped, give the full explainer. Sections, in this order:
 
 1. **Background:** how the part of the system this touches works today, only as much as the change depends on. Leave out what the conversation shows the user already knows.
 2. **The idea:** what the change does and why, in two or three plain sentences, with one concrete example (an input and what now happens to it). No identifiers unless the idea needs one. When the change alters how data moves between three or more modules (a new route, an added or removed step, a new order), follow it with a before and after flow as a plain-text diagram in a code block (boxes and arrows, module names only, not Mermaid, which a terminal doesn't render). Skip it otherwise.
@@ -44,7 +54,7 @@ Scale to the diff. A few-line change gets a few lines in total. Sections, in thi
 
 End with "Say when you're ready for the quiz." Don't show any question yet.
 
-## 4. Quiz
+## 5. Quiz
 
 - About five questions, fewer for a small diff. Medium difficulty.
 - Test behaviour, not recall: what happens on an edge case, why an order matters, what breaks if a line is reverted, which callers see a difference, what the change deliberately doesn't handle. Never ask for a name, a file or a line number.
@@ -53,7 +63,7 @@ End with "Say when you're ready for the quiz." Don't show any question yet.
 - After each answer, mark it right, partly right or wrong. Say plainly where the user's model differs from the code and point to the `file:line` that shows it. "I don't know" counts as wrong.
 - If the user's answer describes what the change should do and the code does something else, that's a likely bug, not a misunderstanding: say so in one line.
 
-## 5. Verdict
+## 6. Verdict
 
 - **Ready to send:** every answer right, or one partly right.
 - **Not yet:** list each missed point with the walk step and `file:line` to re-read, one line each. Offer a fresh question on each missed point, never the same one again.
