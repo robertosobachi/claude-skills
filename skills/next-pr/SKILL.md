@@ -12,7 +12,7 @@ Build one PR from a plan written by `kickoff`, or any plan with a PR list. If th
 
 - Never stage, commit, push, rebase, cherry-pick or post anywhere. Never run `gh pr edit`, `gh pr create` or stacking tools. Give the user the exact commands; they run them.
 - The repo's `CLAUDE.md` overrides this skill: test commands and prefixes, house test style, comment rules, migration rules.
-- Don't write a comment that justifies a workaround. Fix the cause, or stop and say why you can't. Comments age, and the next agent reads a justified workaround as a pattern to copy.
+- Write no code comments unless the repo's rules or the user ask for one, and never one that justifies a workaround. Fix the cause, or stop and say why you can't. Comments age, nothing makes the next reader follow them, and the next agent reads a justified workaround as a pattern to copy.
 - Settled decisions in the plan are settled. Don't reopen them. If the code contradicts one, stop and say so.
 - If the sandbox blocks a command (a local service, the database, `gh`), say so and give the exact command for the user to run and paste back.
 - No AI attribution. Never hard-wrap prose.
@@ -49,7 +49,7 @@ Files, tests, and the order you'd build them, plus anything that touches shared 
 Before touching code, run the relevant tests once with the commands from `CLAUDE.md` and keep the result as the baseline. A test that already fails there is failing for a reason outside this PR. Set this PR's state in section 0 to `in progress`, with its worktree if it has one, so a parallel session can see it.
 
 1. **Build** up to the user's piece, if any, and stop there for their choice. Then finish.
-2. **Run** the relevant tests and the linter on changed files, using the commands from `CLAUDE.md`. Report what ran and what couldn't. If the repo has no tests or linter, say so.
+2. **Run** the relevant tests and the linter on changed files, using the commands from `CLAUDE.md`, plus any property-based UI test or formal model (TLA+, Lean) the repo has for the changed flow. Report what ran and what couldn't. If the repo has no tests or linter, say so.
 3. **Mutation-test every new assertion:** break the code it guards, confirm the test goes red, revert, then confirm the file matches its pre-mutation state (its `git diff` is what it was before) rather than trusting the revert. A green run only counts if it could have gone red. If tests can't run here, give the user the list of mutations to try.
 4. **Check the UI**, if the diff changes what a user sees. With a browser tool (Playwright, or a browser or Chrome DevTools MCP), drive the changed flow in the running app, using the names in the repo's feature map if it has one (its features listed in the user's terms), compare it with what the plan says it should do, and record it: a video or trace file (Playwright `video` or `trace`) where the tool can, a screenshot otherwise. Put the path in the handover and tell the user to watch it before staging. If the app can't run here or there's no browser tool, say so and give the user the steps to check by hand.
 5. **Run the review conventions checklist**, if the repo has one, on this PR's diff (against its parent for a stacked PR), item by item. Fix what fails.
