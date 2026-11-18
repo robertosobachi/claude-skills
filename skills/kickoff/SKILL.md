@@ -26,7 +26,7 @@ Turn a requirements page or ticket into an approved plan of small, independently
 - Read the requirements page in full, including inline and footer comments. Comments often hold decisions the body doesn't.
 - Read the epic and every child ticket.
 - If either is missing or unreachable, ask for it, and ask for the child ticket keys if the connector can't list them. No plan until you have both, or the user confirms there's no epic.
-- Summarise the requirements in a short table or list: what changes for whom, what is out of scope, and what the page leaves undecided.
+- Summarise the requirements in a short table or list: what changes for whom, what is out of scope, and what the page leaves undecided. To find what's undecided, check the rules against each other: two rules that can't both hold (a conflict) and a case no rule covers (a gap). Each goes into the open-questions table.
 - If the work adds or changes a UI flow with more than two states, add a state table from the user's point of view: each state the user can see (for example empty, loading, error, partial, success), the events that move between them, and which the requirements leave undecided. A plain table, not a diagram. Each undecided state goes into the open-questions table.
 
 ### 2. Read or create the review document

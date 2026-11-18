@@ -23,6 +23,7 @@ Reach a shared understanding of what's being built before anyone plans it. The u
 ## 1. Frame it
 
 - Use the argument, otherwise ask what's being grilled. Read whatever it points at (doc, ticket, branch, code area) before the first question.
+- If it states rules, check them against each other before the first question: two rules that can't both hold (a conflict) and a case no rule covers (a gap). Each becomes a branch to walk.
 - In two or three lines, state what you understand the thing to be and the top-level branches you'll walk (for example scope, users, data, interfaces, failure cases, rollout, ownership). Ask the user to correct it. That is the first question.
 
 ## 2. Walk the tree
@@ -36,6 +37,7 @@ Reach a shared understanding of what's being built before anyone plans it. The u
   ```
 - When an answer contradicts an earlier one or doesn't match the code, name the conflict and ask which wins. Don't let it slide.
 - When a word could mean two things, or two words name one thing, settle the term as a decision and use only that term from then on.
+- When a rule could be read more than one way, write out each reading as concrete behaviour before asking. If they all behave the same, don't ask. If they differ, ask, with the readings as the options.
 - For code, cover which modules change and how their interfaces change, not only the behaviour.
 - End each message with `Settled: <n>. Open: <m>.`
 - Don't stop at a set number. A real design can take dozens of questions. Stop when no branch is open, or when the user says stop.
