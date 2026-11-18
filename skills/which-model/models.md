@@ -11,7 +11,7 @@ When a new model ships, re-read the source and update this file and the date. Mo
 | Haiku 5.5 | `haiku` | Classification, routing, extraction, mechanical side tasks | Lowest by far | Fastest |
 | Sonnet 5.5 | `sonnet` | Well-scoped coding, documents, chat, repeated agent tasks | About half of Opus | Fast |
 | Opus 5.5 | `opus` | Default for complex coding and knowledge work | Baseline | Moderate |
-| Fable 5.2 | `fable` | Hardest coding, migrations, architecture, long unattended runs | About twice Opus | Moderate |
+| Fable 5.2 | `fable` | Hardest coding, migrations, architecture | About twice Opus | Moderate |
 
 If an alias isn't recognised, pick the model from the `/model` list. Effort levels, lowest to highest: `low`, `medium`, `high`, `xhigh`, `max`.
 
@@ -29,7 +29,7 @@ If an alias isn't recognised, pick the model from the `/model` list. Effort leve
 | Computer use, vision-heavy work | Opus | `medium` |
 | Major refactors, migrations, architecture planning, leading many subagents | Fable | `medium`, then `high` |
 | Deep research, scientific or quantitative analysis | Fable | `medium`, then `high` |
-| Long unattended runs | Fable | `medium` |
+| Long unattended runs | Opus | `medium` |
 | Classification, routing, tagging, high-volume extraction | Haiku | `medium` |
 
 A clear spec doesn't make a task small. Migrations and performance work can still need Opus, or Fable for a major one.
@@ -44,7 +44,7 @@ When a result falls short, take the next step only:
 
 Past `high`, one more effort level can cost as much as the next model up. In the source, Fable 5.2 at `high` scored about the same as Opus 5.5 at `max` for roughly half the cost per task. So on Opus, go to Fable at `medium` before `xhigh` or `max`.
 
-Going the other way: if a cheaper setting still gets the result, take it. On Opus 5.5, `medium` scored about 2.5 points below `high` at about 70% of the cost.
+Going the other way: if a cheaper setting still gets the result, take it. On Opus 5.5, `medium` scored about 2.5 points below `high` at about 70% of the cost. When a new model ships, step work that ran at `xhigh` down to `high` and re-check: extra effort can overthink.
 
 ## Switching models
 
