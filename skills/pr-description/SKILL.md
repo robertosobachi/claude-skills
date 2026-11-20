@@ -51,7 +51,7 @@ This PR:
 ### Blast radius
 
 - <Is it safe: behind a flag that's off, guests see no change, admin only, ...>
-- <How it was checked: the commands that ran and their result, or a screenshot or video a reviewer can open.>
+- <How it was checked: the commands that ran and their result, or a screenshot or video a reviewer can open. If the agent session that did and checked the work has a link a reviewer can open, add it too, so they see the conversation and tool calls, not only the result. Never invent one.>
 - <What happens if it's wrong, and to whom.>
 - <How to roll back.>
 ```
