@@ -45,6 +45,7 @@ Turn a requirements page or ticket into an approved plan of small, independently
 - From the confirmed commits, list every change the reference feature made, grouped by area (for example schema, API, jobs, config, flags, translations, tests), with `file:line`.
 - Then list every place the new work must differ, with `file:line` and the requirement that forces the difference.
 - Collect every open question in a table with a status: **Open**, **Answered** (with the answer and date), **Moot**, or **Closed for now** (with the reason). Note which questions block which PR.
+- Size the detail to expected pain: how likely a part is to change later, times how hard it is to change once merged. Pin the costly parts down in full (a database schema, a migration, a public API, a stored format); leave cheap-to-change detail (copy, styling, layout) to the build. A small change that is cheap to redo gets a short plan.
 
 ### 5. Slice into PRs
 
