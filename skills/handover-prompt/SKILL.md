@@ -14,7 +14,7 @@ Write the prompt the user pastes into a new session. That session starts with no
 - Don't copy what a plan, log, spec, PR description or memory already holds. Point to it by path, section or URL.
 - Redact secrets, tokens and personal data.
 - Write in the user's voice, addressed to Claude ("Plan and build...", "Ask me..."). No hard-wrapped prose, no AI attribution.
-- Never stage, commit, push or post anywhere. This skill writes only the prompt file and, if needed, the plan's notes.
+- Never stage, commit, push or post anywhere. This skill writes only the prompt file and, if needed, the plan's notes and memory fixes the user approved.
 - Use one simple command per Bash call. No `cd`, loops, `$(...)` or `2>/dev/null`.
 - Don't edit this skill's files or offer to, while running it. If the skill got something wrong, say what in one line; the user changes it in the skill's source repo.
 - With no repo or file access (Claude Desktop or claude.ai chat), skip the repo steps and give the prompt in a code block instead of saving it.
@@ -27,7 +27,7 @@ Use the argument if given. Otherwise ask: one task (build PR 4, answer review ro
 
 - From this conversation: decisions made and by whom, corrections, what's blocked and why, what the user said they'll do themselves.
 - From the repo: current branch, stack and heads, uncommitted changes, plan doc section 0 and the latest session-log entries if they exist.
-- From memory, if the session uses it: which memory entries the next session should read, and which this session proved wrong or stale. Leave those out of the prompt and tell the user which to fix or delete.
+- From memory, if the session uses it: which memory entries the next session should read, and which this session proved wrong or stale. Leave those out of the prompt. For each wrong or stale entry, propose the fix (the corrected text, or delete), with the evidence from this session, and apply it once the user approves.
 - Before writing the prompt, update the plan's current state and the session log if this session changed them, so the prompt can point to them instead of repeating them. Do the same for rules and corrections the user gave this session that should outlive the next one ("if the migration fails, restore the snapshot first"): put them in the plan's notes, not only in the prompt.
 - Anything the next session will need from the user (a link still to come, whether a local copy of a live page is current): ask now, or list it in the prompt as the first thing to ask.
 
