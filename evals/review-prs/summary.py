@@ -4,7 +4,7 @@
 Usage: summary.py <case dir> [<case dir> ...]
 
 Groups runs by (skill, Claude Code version, model, effort): only runs in the same
-group are comparable. If a run has a <run>.me.md with your own J1-J7
+group are comparable. If a run has a <run>.me.md with your own J1-J9
 verdicts, it also reports how often the judge agreed with you per item.
 Runs with a <run>.trace.jsonl also get median tool calls, errors and retries.
 """

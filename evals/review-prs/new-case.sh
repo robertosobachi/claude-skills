@@ -121,6 +121,10 @@ fi
   echo "One line per rule the diff breaks: rule | source file | path:line"
   echo
   echo "- "
+  echo
+  echo "## Size"
+  echo
+  echo "split: no | split: yes, <chunk 1>, <chunk 2>, ... (keep one)"
 } > "$case_dir/expected.md"
 
 local_map="$SKILL_EVALS_DIR/repos.local"

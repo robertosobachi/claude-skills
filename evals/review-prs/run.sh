@@ -61,7 +61,7 @@ judge_run() {
   {
     echo "You are grading one code review report against a checklist. Use only the text below."
     echo "Answer each item on its own line, exactly as: J<n>: PASS | <one-line reason> or J<n>: FAIL | <one-line reason>."
-    echo "Answer J1 to J7 and nothing else."
+    echo "Answer J1 to J9 and nothing else."
     echo
     echo "# Checklist"
     sed -n '/^## Judge checks/,$p' "$here/checklist.md"
@@ -71,6 +71,9 @@ judge_run() {
     echo
     echo "# Report"
     cat "$out"
+    echo
+    echo "# Tool calls"
+    python3 "$here/tooltrace.py" --calls "${out%.md}.trace.jsonl" 2>/dev/null || echo "(no trace)"
     echo
     echo "# Diff"
     git -C "$repo_path" diff "$base...$head" | head -3000

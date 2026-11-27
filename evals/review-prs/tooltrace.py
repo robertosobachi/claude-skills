@@ -3,6 +3,7 @@
 
 Usage:
   tooltrace.py --result <run>.trace.jsonl   print the final report text
+  tooltrace.py --calls <run>.trace.jsonl    print every tool call, one per line
   tooltrace.py <run>.trace.jsonl            print tool calls, errors and retries
 
 A retry is a tool call that failed and was followed by another call to the
@@ -67,6 +68,10 @@ def main():
     args = sys.argv[1:]
     if args[:1] == ["--result"] and len(args) == 2:
         print(result(args[1]))
+        return
+    if args[:1] == ["--calls"] and len(args) == 2:
+        for c in calls(args[1]):
+            print(f"- {c['name']}: {c['label'][:200]}" + (" (error)" if c["error"] else ""))
         return
     if len(args) != 1:
         sys.exit(__doc__.strip())

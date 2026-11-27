@@ -20,7 +20,7 @@ $SKILL_EVALS_DIR/
     runs/<batch>-<skill>-<n>.md          # saved report, with a header
     runs/<batch>-<skill>-<n>.trace.jsonl # stream-json trace: every tool call and result
     runs/<batch>-<skill>-<n>.judge1.md   # judge verdicts, two passes
-    runs/<batch>-<skill>-<n>.me.md       # optional: your own J1-J6 verdicts
+    runs/<batch>-<skill>-<n>.me.md       # optional: your own J1-J9 verdicts
 ```
 
 Before you sync cases to a personal repo, check your employer's policy on keeping notes about their code there. If it isn't allowed, keep `SKILL_EVALS_DIR` on each machine and don't push it.

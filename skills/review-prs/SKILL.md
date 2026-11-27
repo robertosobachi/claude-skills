@@ -66,11 +66,14 @@ If the answer is yes, run it after your own review in section 4, so your reading
 - Blocking issues: bugs, crashes, data loss, security, broken build or tests, callers broken by removed or renamed symbols, or a clear break of a rule in a paired `CLAUDE.md` or `AGENTS.md`. A conventions doc rule is blocking only when the break also fits this list, otherwise it's a suggestion.
 - Non-blocking suggestions: at most 2 per PR, only where a user or the next developer would notice the difference (clearer code, a missing test for a case that matters, a simpler way to do the same thing). Skip pure style and naming preferences. A test name that claims more than its body checks isn't a preference.
 - Verify every candidate issue before reporting it: grep for callers of removed symbols, read the implementation behind any new wrapper, and compare behaviour with the existing implementation when a PR claims parity with it (another platform, module or service). Turn anything uncertain into a short question, not a blocker, and only when the answer would change the verdict, otherwise drop it. A 🔴 or ❓ on a sound PR costs the author time the way a miss costs the user.
+- **Size.** Flag a PR as too big when it has more than ~400 changed lines of hand-written code (leave out lockfiles, generated files, snapshots and fixtures), or when it mixes unrelated changes (a feature, a refactor and a dependency bump together). Propose a split into 2-4 chunks, each named by commit range or area, in the order they'd stack. Size alone never moves a PR off ✅ and doesn't count towards the 2 suggestions.
 - Check across the stack: a later PR relying on something missing earlier, or an earlier PR that stays broken until a later one lands. For PRs in the set that don't stack, check whether they disagree in intent even though each merges and passes alone (one moves invoice totals to cents while another changes the report that reads them).
 
 ## 5. Report (in chat)
 
-1. **Verdict.** One line per PR: `#<n> <title>: ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several.
+Keep it short enough to read at a glance: about one screen per PR, not counting the paste-ready comments. Cut before adding.
+
+1. **Verdict.** One line per PR: `#<n> <title>: ✅ OK to merge | ⚠️ Merge after fix | ❌ Not yet`, in a small table if there are several. Under a PR flagged too big in section 4, add `Size: <why it's big>. Split: <chunk 1>, <chunk 2>, ...`.
 2. **Comments.** Under it, paste-ready comments if there's anything to say, written as in "Writing comments" below. List 🔴 first, then ❓, then 💡. Each comment uses this shape:
 
    ```
@@ -80,16 +83,16 @@ If the answer is yes, run it after your own review in section 4, so your reading
    Why: <for the user, never pasted>
    ```
 
-3. **`Why:` notes.** For the user only. Every comment gets one, the final comment included. In one to three plain sentences, say what you found, how you checked it (callers grepped, implementation read, compared with the other platform) and what happens if it's ignored. When the comment rests on a repo rule, name the file it came from. This is where the technical detail and evidence go, so the comment itself can stay short. Write it so the user could defend the comment if the author pushes back.
+3. **`Why:` notes.** For the user only. Every comment gets one, the final comment included. In one or two plain sentences, say what you found, how you checked it (callers grepped, implementation read, compared with the other platform) and what happens if it's ignored. When the comment rests on a repo rule, name the file it came from. This is where the technical detail and evidence go, so the comment itself can stay short. Write it so the user could defend the comment if the author pushes back.
 4. Suggestions alone never move a PR off ✅.
-5. **Checked.** A few short bullets on what was checked, the limits (no CI status or existing comments without `gh`, nothing built locally), and which standards files were read, or that there were none. Say whether the test rules were applied, or why not (no test files changed, `review-tests` not installed). When a search found nothing (no other callers, no other readers of a changed field), say none were found in the places searched and name them, here and in any `Why:` note, never that none exist.
+5. **Checked.** At most 4 short bullets, for the user, on what was checked, the limits (no CI status or existing comments without `gh`, nothing built locally), and which standards files were read, or that there were none. Say whether the test rules were applied, or why not (no test files changed, `review-tests` not installed). When a search found nothing (no other callers, no other readers of a changed field), say none were found in the places searched and name them, here and in any `Why:` note, never that none exist.
 6. **Adversarial pass.** If section 3 ran, one bullet per PR: the pass ran or was skipped (and why), how many findings were kept and dropped, and which checks ran.
-7. **Cleanup.** Mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`.
+7. **Cleanup.** One line: mention that `refs/review/*` can be removed with `git for-each-ref --format="%(refname)" refs/review | xargs -n1 git update-ref -d`.
 8. **Final comment.** Close the report with the final comment for each PR (section 7). It's always included, not only when asked.
 
 ### Writing comments
 
-Applies to every comment, the final one included.
+Applies to every comment, the final one included, except where section 7 says otherwise: the final comment opens with `LGTM 👍🏻` on ✅, is written in the first person and says in one sentence what the PR does.
 
 - Start with one emoji, then the text:
   - 🔴 must fix before merge (a real bug, crash, data loss, broken build)
@@ -97,8 +100,8 @@ Applies to every comment, the final one included.
   - 💡 suggestion, non-blocking, fine to skip or do later
 - Say why, not what. The author can see the code, so don't describe what it does or restate the diff. Say what happens to a user or the next developer if it stays as it is, then the fix in a few words.
 - Don't explain how it goes wrong inside the code (call chains, render cycles, internals). That goes in the `Why:` note.
-- Two short sentences at most, roughly 30 words. If it needs more, the rest belongs in the note.
-- Talk about the code, not the author or the team. The subject is the code or what it does ("This", "the spinner", a backticked name), never "we", "you" or "let's". Give the fix as what the code needs ("hiding it on error too would fix it") or as a question about the code ("Should this also hide on error?").
+- Two short sentences at most, roughly 30 words. If it needs more, the rest belongs in the note. The final comment has its own shape and limit, in section 7.
+- Talk about the code, not the author or the team (the final comment is the exception). The subject is the code or what it does ("This", "the spinner", a backticked name), never "we", "you" or "let's". Give the fix as what the code needs ("hiding it on error too would fix it") or as a question about the code ("Should this also hide on error?").
 - Exception: when the point is product behaviour the code can't settle (who should see something, what should happen in a flow), make it a ❓ that asks for the intended behaviour to be confirmed. Addressing people is fine there.
 - Friendly, as to a colleague. The phrasing carries the tone, not pronouns.
 - Everyday words, no technical or AI jargon: "the list shows twice on a fast double tap", not "race condition on re-render". Use code names in backticks only when needed to point at the thing.
@@ -127,11 +130,11 @@ Better:
 - Plain words over tell-words: delve, robust, seamless, crucial, comprehensive, leverage (say "use"), ensure (say "make sure", or cut it).
 - Don't force groups of three. At most one hedge per sentence, and none on a claim you've verified.
 - Leave quoted text, code and identifiers as they are.
-- The one opener allowed is LGTM, at the start of a ✅ final comment.
+- The one opener allowed is `LGTM 👍🏻`, at the start of a ✅ final comment.
 - No technical jargon: regression, edge case, race condition, idempotent, side effect, refactor. Say what happens instead.
-- No sentence that only describes what the code does.
-- No "we", "you", "let's" or "could we", except in a ❓ that confirms product behaviour.
-- Every comment starts with its emoji and has a `Why:` note under it.
+- No sentence that only describes what the code does, except the final comment's one sentence on what the PR does.
+- No "we", "you", "let's" or "could we", except in a ❓ that confirms product behaviour and in the final comment, which is written in the first person.
+- Every comment starts with its emoji (`LGTM 👍🏻` for a ✅ final comment) and has a `Why:` note under it.
 
 ## 6. Approval trade-off (per PR, in the report)
 
@@ -141,21 +144,33 @@ For each PR, answer three questions in one short line each, based on the actual 
 - **If it's wrong:** what breaks and for whom, how visible it is (crash, wrong data, hidden row, test-only), how easy it is to undo (revert one PR, fix forward, or a stacked PR has to come out with it), and whether a feature flag or staged rollout you can point to would catch it before most users see it. Say so plainly when the blast radius is small.
 - **What I get back:** the concrete payoff. A bug fix users feel, parity with another implementation, tests that protect later work, unblocking the next PR in the stack, or less code to maintain.
 
-Keep it to three lines per PR, with no hedging. If a PR is refactor-only with tests, say that the risk is low and why.
+Keep it to three lines per PR, each a short phrase rather than a full sentence, with no hedging. If a PR is refactor-only with tests, say that the risk is low and why.
 
 ## 7. Final comment (always)
 
-One paste-ready comment per PR, whatever the verdict, at the end of the section 5 report.
+One paste-ready comment per PR, whatever the verdict, at the end of the section 5 report. It reads like a colleague who read the PR, in the first person ("I see you...", "I checked..."), so the author knows it was actually reviewed.
 
-- Open with the verdict emoji (✅, ⚠️ or ❌).
-- ✅ OK to merge: "✅ LGTM", then add one or both, briefly: the payoff in plain words if users or developers will notice it (for example "users get the new behaviour now, nice!"), or a one-line restatement of what the PR does, to show the change was understood.
-- ⚠️ Merge after fix or ❌ Not yet: no LGTM. One or two sentences on what has to change before it can merge, pointing to the inline comments. Restate what the PR does if that helps.
-- Keep every comment to one or two short sentences. Plain, natural English, no filler, no AI attribution.
+- ✅ OK to merge: start with `LGTM 👍🏻`, then one casual sentence on what the PR does, naming the concrete things it changed ("I see you updated the text on both platforms and added a script that makes the next update easier"). Add the payoff only if users or developers will notice it.
+- ⚠️ Merge after fix or ❌ Not yet: start with the verdict emoji, no LGTM. One sentence on what has to change before it can merge, pointing to the inline comments.
+- Then a short `What I checked:` list, 2-4 bullets of a few words each, specific to this diff (the callers of a renamed function, that both platforms show the same text, the paths the new script reads). Only list what was actually checked, in words that say how: read, compared, searched. Never "tested" or "ran" unless a passing CI check did it, and then say so.
+- If section 4 flagged the PR as too big, add one sentence suggesting the split for next time.
+- Plain, natural English, no filler, no AI attribution. About 70 words at most, list included.
 - Describe the change exactly as the diff shows it. A new property on an existing event isn't a "new event". When the user's wording and the diff disagree, follow the diff and flag the difference outside the comment.
 - LGTM is the expected opening, so vary only what comes after it. Don't reuse the same wording or sentence pattern across PRs.
 - Only praise something that matters to a reader. Don't call out things with no visible effect (for example "now read-only") unless you can say why it helps in a few words.
 - Its `Why:` note says in a line why you gave that verdict.
 - Run the style pass from "Writing comments" on it.
+
+Example:
+
+> LGTM 👍🏻 I see you moved the welcome text into the shared strings for both apps and added a script to check nothing is missing, which makes the next copy change easier.
+>
+> What I checked:
+> - Compared the iOS and Android strings, they match
+> - Searched for leftover hard-coded copy, none in the screens touched
+> - Read the script's paths against the repo layout
+
+Why: no blockers, CI green, both platforms read the same keys.
 
 ## 8. Summary (when asked)
 
